@@ -92,11 +92,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
   },
   fabText: { fontSize: 15, fontWeight: '700' },
 });
