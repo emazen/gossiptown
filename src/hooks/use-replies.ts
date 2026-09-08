@@ -15,8 +15,8 @@ export function useThreadDetail(threadId: string, userId: string | null) {
     let cancelled = false;
     (async () => {
       const [t, r] = await Promise.all([
-        supabase.from('threads').select(`*, ${AUTHOR_SELECT}`).eq('id', threadId).maybeSingle(),
-        supabase.from('replies').select(`*, ${AUTHOR_SELECT}`).eq('thread_id', threadId).order('created_at'),
+        supabase.from('threads').select(`*, ${AUTHOR_SELECT}`).eq('id', threadId).is('deleted_at', null).maybeSingle(),
+        supabase.from('replies').select(`*, ${AUTHOR_SELECT}`).eq('thread_id', threadId).is('deleted_at', null).order('created_at'),
       ]);
       if (cancelled) return;
       if (t.error || r.error) setError((t.error ?? r.error)!.message);

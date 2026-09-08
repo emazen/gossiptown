@@ -21,6 +21,7 @@ export function useThreads(neighborhoodId: string | null) {
         .from('threads')
         .select(`*, ${AUTHOR_SELECT}`)
         .eq('neighborhood_id', neighborhoodId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(PAGE);
       if (before) q = q.lt('created_at', before);

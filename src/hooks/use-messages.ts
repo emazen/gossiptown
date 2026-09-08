@@ -22,6 +22,7 @@ export function useMessages(neighborhoodId: string | null, userId: string | null
         .from('messages')
         .select(`*, ${AUTHOR_SELECT}`)
         .eq('neighborhood_id', neighborhoodId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(PAGE);
       if (cancelled) return;
