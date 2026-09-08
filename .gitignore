@@ -47,3 +47,6 @@ example
 
 # supabase cli cache
 supabase/.temp/
+
+# postgres password for the Supabase project (needed only for `supabase link`)
+supabase/.db-password
