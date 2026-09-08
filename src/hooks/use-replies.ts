@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuthorCache, AUTHOR_SELECT } from '@/hooks/use-authors';
 import type { Reply, ReplyWithAuthor, ThreadWithAuthor } from '@/lib/database.types';
@@ -10,6 +10,7 @@ export function useThreadDetail(threadId: string, userId: string | null) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { prime, resolve } = useAuthorCache();
+  const deletedEarly = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
@@ -41,6 +42,7 @@ export function useThreadDetail(threadId: string, userId: string | null) {
         async (payload) => {
           const row = payload.new as Reply;
           const authors = await resolve([row.user_id]);
+          if (deletedEarly.current.has(row.id)) return;
           setReplies((prev) =>
             prev.some((x) => x.id === row.id) ? prev : [...prev, { ...row, author: authors.get(row.user_id) ?? null }],
           );
@@ -51,7 +53,10 @@ export function useThreadDetail(threadId: string, userId: string | null) {
         { event: 'UPDATE', schema: 'public', table: 'replies', filter: `thread_id=eq.${threadId}` },
         (payload) => {
           const row = payload.new as Reply;
-          if (row.deleted_at) setReplies((prev) => prev.filter((x) => x.id !== row.id));
+          if (row.deleted_at) {
+            deletedEarly.current.add(row.id);
+            setReplies((prev) => prev.filter((x) => x.id !== row.id));
+          }
         },
       )
       .subscribe();

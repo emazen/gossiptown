@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuthorCache, AUTHOR_SELECT } from '@/hooks/use-authors';
 import type { Message, MessageWithAuthor } from '@/lib/database.types';
@@ -11,6 +11,7 @@ export function useMessages(neighborhoodId: string | null, userId: string | null
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { prime, resolve } = useAuthorCache();
+  const deletedEarly = useRef(new Set<string>());
 
   // Initial load (newest first; list is inverted).
   useEffect(() => {
@@ -50,6 +51,7 @@ export function useMessages(neighborhoodId: string | null, userId: string | null
         async (payload) => {
           const row = payload.new as Message;
           const authors = await resolve([row.user_id]);
+          if (deletedEarly.current.has(row.id)) return;
           setMessages((prev) =>
             prev.some((m) => m.id === row.id) ? prev : [{ ...row, author: authors.get(row.user_id) ?? null }, ...prev],
           );
@@ -60,7 +62,10 @@ export function useMessages(neighborhoodId: string | null, userId: string | null
         { event: 'UPDATE', schema: 'public', table: 'messages', filter: `neighborhood_id=eq.${neighborhoodId}` },
         (payload) => {
           const row = payload.new as Message;
-          if (row.deleted_at) setMessages((prev) => prev.filter((m) => m.id !== row.id));
+          if (row.deleted_at) {
+            deletedEarly.current.add(row.id);
+            setMessages((prev) => prev.filter((m) => m.id !== row.id));
+          }
         },
       )
       .subscribe();

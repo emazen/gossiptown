@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useAuthorCache, AUTHOR_SELECT } from '@/hooks/use-authors';
 import type { Thread, ThreadWithAuthor } from '@/lib/database.types';
@@ -13,6 +13,8 @@ export function useThreads(neighborhoodId: string | null) {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { prime, resolve } = useAuthorCache();
+  /** UPDATE payloads can arrive while an INSERT handler is still resolving its author. Keep the newest row per id. */
+  const latest = useRef(new Map<string, Thread>());
 
   const fetchPage = useCallback(
     async (before?: string) => {
@@ -82,8 +84,9 @@ export function useThreads(neighborhoodId: string | null) {
         async (payload) => {
           const row = payload.new as Thread;
           const authors = await resolve([row.user_id]);
+          const fresh = latest.current.get(row.id) ?? row;
           setThreads((prev) =>
-            prev.some((t) => t.id === row.id) ? prev : [{ ...row, author: authors.get(row.user_id) ?? null }, ...prev],
+            prev.some((t) => t.id === row.id) ? prev : [{ ...fresh, author: authors.get(row.user_id) ?? null }, ...prev],
           );
         },
       )
@@ -92,6 +95,7 @@ export function useThreads(neighborhoodId: string | null) {
         { event: 'UPDATE', schema: 'public', table: 'threads', filter: `neighborhood_id=eq.${neighborhoodId}` },
         (payload) => {
           const row = payload.new as Thread;
+          latest.current.set(row.id, row);
           setThreads((prev) =>
             row.deleted_at
               ? prev.filter((t) => t.id !== row.id)
