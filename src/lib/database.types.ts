@@ -12,6 +12,7 @@ export interface Database {
           id: string;
           nickname: string;
           avatar_hue: number;
+          avatar_url: string | null;
           created_at: string;
           banned_at: string | null;
         };
@@ -19,6 +20,7 @@ export interface Database {
           id: string;
           nickname: string;
           avatar_hue?: number;
+          avatar_url?: string | null;
           created_at?: string;
           banned_at?: string | null;
         };
@@ -221,7 +223,7 @@ export interface Database {
     Views: Record<string, never>;
     Functions: {
       set_location: {
-        Args: { p_lat: number; p_lng: number; p_city: string; p_district: string; p_name: string };
+        Args: { p_lat: number; p_lng: number; p_city: string; p_district: string };
         Returns: Database['public']['Tables']['neighborhoods']['Row'];
       };
       ensure_profile: {
@@ -256,7 +258,7 @@ export type ConversationWithPeer = Conversation & {
 };
 
 /** Public shape of an author, joined onto content rows. */
-export type Author = Pick<Profile, 'id' | 'nickname' | 'avatar_hue'>;
+export type Author = Pick<Profile, 'id' | 'nickname' | 'avatar_hue' | 'avatar_url'>;
 
 export type MessageWithAuthor = Message & { author: Author | null };
 export type ThreadWithAuthor = Thread & { author: Author | null };

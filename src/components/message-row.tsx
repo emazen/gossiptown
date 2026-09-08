@@ -22,7 +22,7 @@ export const MessageRow = memo(function MessageRow({ message, mine, grouped, onL
     <Pressable onLongPress={onLongPress} delayLongPress={300} style={[styles.row, mine && styles.rowMine, grouped && styles.rowGrouped]}>
       {!mine && (
         <View style={styles.avatarSlot}>
-          {!grouped && author && <Avatar nickname={author.nickname} hue={author.avatar_hue} size={28} />}
+          {!grouped && author && <Avatar nickname={author.nickname} hue={author.avatar_hue} url={author.avatar_url} size={28} />}
         </View>
       )}
       <View style={[styles.bubbleCol, mine && styles.bubbleColMine]}>

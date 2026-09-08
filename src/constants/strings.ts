@@ -9,7 +9,7 @@ export const S = {
   onboarding: {
     heroTitle: 'Mahallende neler oluyor?',
     heroBody:
-      'Sadece bulunduğun mahallenin sohbetini görürsün. Konumunu aç, mahalleni bulalım.',
+      'Sadece bulunduğun ilçenin sohbetini görürsün. Konumunu aç, seni yerleştirelim.',
     enableLocation: 'Konumu aç',
     locating: 'Mahallen bulunuyor…',
     permissionDenied:
@@ -55,7 +55,7 @@ export const S = {
 
   threads: {
     title: 'Konular',
-    empty: 'Mahallede henüz kimse konuşmadı.\nİlk konuyu sen aç.',
+    empty: 'Burada henüz kimse konuşmadı.\nİlk konuyu sen aç.',
     newThread: 'Yeni konu',
     titlePlaceholder: 'Ne oldu? Kısa bir başlık…',
     bodyPlaceholder: 'Detayları anlat… (isteğe bağlı)',
@@ -76,7 +76,12 @@ export const S = {
   me: {
     title: 'Ben',
     nickname: 'Takma ad',
-    neighborhood: 'Mahallen',
+    neighborhood: 'Bölgen',
+    changePhoto: 'Fotoğrafı değiştir',
+    pickPhoto: 'Fotoğraf seç',
+    removePhoto: 'Fotoğrafı kaldır',
+    photoUploading: 'Yükleniyor…',
+    photoTooBig: 'Fotoğraf 2 MB’den küçük olmalı.',
     refreshLocation: 'Konumu yenile',
     blocked: 'Engellenenler',
     noBlocked: 'Kimseyi engellemedin.',
@@ -118,7 +123,7 @@ export const S = {
     profanity: 'Bu kelimelerle paylaşamazsın.',
     offline: 'İnternet yok gibi.',
     locationStale: 'Konumun eskidi. Yenilemek için dokun.',
-    notInNeighborhood: 'Bu mahallede değilsin gibi görünüyor.',
+    notInNeighborhood: 'Bu bölgede değilsin gibi görünüyor.',
   },
 
   time: {

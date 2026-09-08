@@ -7,7 +7,7 @@ import { locate, type ResolvedPlace } from '@/lib/geo';
 import { supabase } from '@/lib/supabase';
 import { useSession } from '@/providers/session';
 
-const CACHE_KEY = 'tp.neighborhood.v1';
+const CACHE_KEY = 'tp.neighborhood.v2';
 /** Re-verify location when the app comes back after this long. */
 const STALE_MS = 30 * 60 * 1000;
 
@@ -73,7 +73,6 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
         p_lng: res.place.lng,
         p_city: res.place.city,
         p_district: res.place.district,
-        p_name: res.place.name,
       });
       if (rpcErr) throw rpcErr;
       const nb = data as Neighborhood;

@@ -17,7 +17,7 @@ export function useAuthorCache() {
   const resolve = useCallback(async (ids: string[]): Promise<Map<string, Author>> => {
     const missing = [...new Set(ids)].filter((id) => !cache.current.has(id));
     if (missing.length) {
-      const { data } = await supabase.from('profiles').select('id, nickname, avatar_hue').in('id', missing);
+      const { data } = await supabase.from('profiles').select('id, nickname, avatar_hue, avatar_url').in('id', missing);
       for (const a of data ?? []) cache.current.set(a.id, a);
     }
     return cache.current;
@@ -26,4 +26,4 @@ export function useAuthorCache() {
   return { prime, resolve };
 }
 
-export const AUTHOR_SELECT = 'author:profiles!user_id(id, nickname, avatar_hue)';
+export const AUTHOR_SELECT = 'author:profiles!user_id(id, nickname, avatar_hue, avatar_url)';

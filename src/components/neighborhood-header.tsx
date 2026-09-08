@@ -11,7 +11,7 @@ type Props = { title: string; right?: React.ReactNode };
 export function NeighborhoodHeader({ title, right }: Props) {
   const t = useTheme();
   const { neighborhood, status, refresh } = useNeighborhood();
-  const sub = neighborhood ? `${neighborhood.name}, ${neighborhood.district}` : '…';
+  const sub = neighborhood ? `${neighborhood.name}, ${neighborhood.city}` : '…';
   return (
     <View style={[styles.wrap, { borderBottomColor: t.border }]}>
       <View style={styles.titles}>

@@ -50,6 +50,13 @@
           "locationWhenInUsePermission": "Third Place, sadece bulunduğun mahallenin sohbetini göstermek için konumunu kullanır.",
           "isAndroidBackgroundLocationEnabled": false
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Third Place, profil fotoğrafı seçmen için fotoğraflarına erişir.",
+          "cameraPermission": "Third Place, profil fotoğrafı çekmen için kamerayı kullanır."
+        }
       ]
     ],
     "experiments": {

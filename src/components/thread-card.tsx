@@ -24,7 +24,7 @@ export const ThreadCard = memo(function ThreadCard({ thread, onPress, onLongPres
         { backgroundColor: pressed ? t.surfaceElevated : t.surface, borderColor: t.border },
       ]}>
       <View style={styles.meta}>
-        {a && <Avatar nickname={a.nickname} hue={a.avatar_hue} size={22} />}
+        {a && <Avatar nickname={a.nickname} hue={a.avatar_hue} url={a.avatar_url} size={22} />}
         <Text style={[styles.metaText, { color: t.textSecondary }]} numberOfLines={1}>
           {a?.nickname ?? '…'} · {timeAgo(thread.created_at)}
         </Text>

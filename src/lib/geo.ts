@@ -11,8 +11,8 @@ export const SUPPORTED_CITIES: Record<string, string> = {
 
 export type ResolvedPlace = {
   city: string;
+  /** İlçe. This is the room. The server canonicalizes the name. */
   district: string;
-  name: string;
   lat: number;
   lng: number;
   supported: boolean;
@@ -42,18 +42,11 @@ export function slugify(...parts: string[]): string {
     .join('/');
 }
 
-/** Turkish geocoders return "Caferağa Mahallesi" or "Caferağa Mah."; keep just the name. */
-function cleanNeighborhoodName(raw: string): string {
-  return raw
-    .replace(/\s+(mahallesi|mah\.?|mh\.?)$/i, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 /**
- * Map a platform geocode result onto (city, district, neighborhood).
+ * Map a platform geocode result onto (il, ilçe).
  * iOS and Android disagree on which field holds what in Turkey, so we try
- * several in order of reliability.
+ * several in order of reliability. Mahalle is deliberately ignored: geocoders
+ * disagree on neighborhood names across platforms.
  */
 export function resolveFromAddress(
   a: Location.LocationGeocodedAddress,
@@ -72,13 +65,7 @@ export function resolveFromAddress(
   );
   const district = districtCandidates[0] ?? city;
 
-  // Neighborhood (mahalle). Usually district on iOS; may be absent on Android.
-  const nameRaw =
-    [a.district, a.name].find((v) => v && normalizeKey(v) !== normalizeKey(district) && !/^\d/.test(v)) ??
-    district;
-  const name = cleanNeighborhoodName(nameRaw);
-
-  return { city, district, name, lat, lng, supported };
+  return { city, district, lat, lng, supported };
 }
 
 function pickSupported(candidates: (string | null)[]): string | null {

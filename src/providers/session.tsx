@@ -14,6 +14,8 @@ type SessionState = {
   userId: string | null;
   /** Create (or update) the profile row for this anonymous user. */
   saveProfile: (nickname: string, avatarHue: number) => Promise<void>;
+  /** Merge fields into the cached profile after a direct update. */
+  patchProfile: (patch: Partial<Profile>) => void;
   /** Delete local session. The anonymous auth user becomes orphaned. */
   signOut: () => Promise<void>;
 };
@@ -90,6 +92,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
     [],
   );
 
+  const patchProfile = useCallback((patch: Partial<Profile>) => {
+    setProfile((prev) => (prev ? { ...prev, ...patch } : prev));
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -101,8 +107,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, []);
 
   const value = useMemo<SessionState>(
-    () => ({ session, profile, loading, error, userId, saveProfile, signOut }),
-    [session, profile, loading, error, userId, saveProfile, signOut],
+    () => ({ session, profile, loading, error, userId, saveProfile, patchProfile, signOut }),
+    [session, profile, loading, error, userId, saveProfile, patchProfile, signOut],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

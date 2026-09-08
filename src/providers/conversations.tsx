@@ -10,7 +10,7 @@ type Row = Conversation & {
   reads: { user_id: string; last_read_at: string }[];
 };
 
-const SELECT = `*, a:profiles!user_a(id, nickname, avatar_hue), b:profiles!user_b(id, nickname, avatar_hue), reads:conversation_reads(user_id, last_read_at)`;
+const SELECT = `*, a:profiles!user_a(id, nickname, avatar_hue, avatar_url), b:profiles!user_b(id, nickname, avatar_hue, avatar_url), reads:conversation_reads(user_id, last_read_at)`;
 
 function toView(row: Row, me: string): ConversationWithPeer | null {
   const peer = row.user_a === me ? row.b : row.a;

@@ -13,7 +13,7 @@ export function useContacts() {
     if (!userId) return;
     const { data } = await supabase
       .from('contacts')
-      .select('created_at, person:profiles!contact_id(id, nickname, avatar_hue)')
+      .select('created_at, person:profiles!contact_id(id, nickname, avatar_hue, avatar_url)')
       .eq('owner_id', userId)
       .order('created_at', { ascending: false });
     setContacts(((data ?? []) as unknown as { person: Author | null }[]).map((r) => r.person).filter((p): p is Author => !!p));

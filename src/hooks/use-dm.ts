@@ -31,7 +31,7 @@ export function useDm(conversationId: string, userId: string | null) {
       const [conv, msgs] = await Promise.all([
         supabase
           .from('conversations')
-          .select('*, a:profiles!user_a(id, nickname, avatar_hue), b:profiles!user_b(id, nickname, avatar_hue)')
+          .select('*, a:profiles!user_a(id, nickname, avatar_hue, avatar_url), b:profiles!user_b(id, nickname, avatar_hue, avatar_url)')
           .eq('id', conversationId)
           .maybeSingle(),
         supabase

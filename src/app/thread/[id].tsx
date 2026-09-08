@@ -60,7 +60,7 @@ export default function ThreadScreen() {
           }
           delayLongPress={300}
           style={[styles.reply, { borderBottomColor: t.border }]}>
-          {item.author && <Avatar nickname={item.author.nickname} hue={item.author.avatar_hue} size={30} />}
+          {item.author && <Avatar nickname={item.author.nickname} hue={item.author.avatar_hue} url={item.author.avatar_url} size={30} />}
           <View style={styles.replyBody}>
             <View style={styles.replyMeta}>
               <Text style={[styles.replyName, { color: mine ? t.accent : t.text }]}>{item.author?.nickname ?? '…'}</Text>
@@ -120,7 +120,7 @@ export default function ThreadScreen() {
               delayLongPress={300}
               style={[styles.head, { borderBottomColor: t.border }]}>
               <View style={styles.headMeta}>
-                {thread.author && <Avatar nickname={thread.author.nickname} hue={thread.author.avatar_hue} size={24} />}
+                {thread.author && <Avatar nickname={thread.author.nickname} hue={thread.author.avatar_hue} url={thread.author.avatar_url} size={24} />}
                 <Text style={[styles.headMetaText, { color: t.textSecondary }]}>
                   {thread.author?.nickname ?? '…'} · {timeAgo(thread.created_at)}
                 </Text>

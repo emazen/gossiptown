@@ -23,7 +23,7 @@ export default function DmsScreen() {
     <Pressable
       onPress={() => router.push({ pathname: '/dm/[id]', params: { id: item.id } })}
       style={({ pressed }) => [styles.row, { backgroundColor: pressed ? t.surfaceElevated : 'transparent', borderBottomColor: t.border }]}>
-      <Avatar nickname={item.peer.nickname} hue={item.peer.avatar_hue} size={44} />
+      <Avatar nickname={item.peer.nickname} hue={item.peer.avatar_hue} url={item.peer.avatar_url} size={44} />
       <View style={styles.rowBody}>
         <View style={styles.rowTop}>
           <Text style={[styles.name, { color: t.text }]} numberOfLines={1}>

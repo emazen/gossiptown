@@ -51,7 +51,7 @@ export default function ContactsScreen() {
               onLongPress={() => confirmRemove(item)}
               delayLongPress={300}
               style={({ pressed }) => [styles.row, { backgroundColor: pressed ? t.surfaceElevated : 'transparent', borderBottomColor: t.border }]}>
-              <Avatar nickname={item.nickname} hue={item.avatar_hue} size={40} />
+              <Avatar nickname={item.nickname} hue={item.avatar_hue} url={item.avatar_url} size={40} />
               <Text style={[styles.name, { color: t.text }]}>{item.nickname}</Text>
               <Text style={[styles.action, { color: t.accent }]}>{S.dms.startChat}</Text>
             </Pressable>
