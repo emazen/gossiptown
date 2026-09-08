@@ -3,11 +3,11 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
 import { S } from '@/constants/strings';
 import { useTheme } from '@/hooks/use-theme';
-import { useUnreadCount } from '@/hooks/use-conversations';
+import { useConversations } from '@/hooks/use-conversations';
 
 export default function TabsLayout() {
   const t = useTheme();
-  const unread = useUnreadCount();
+  const { unreadCount: unread } = useConversations();
   return (
     <NativeTabs
       backgroundColor={t.surface}

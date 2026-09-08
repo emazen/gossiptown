@@ -6,6 +6,7 @@ import { ActivityIndicator, StyleSheet, Text, View, useColorScheme } from 'react
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Colors, Spacing } from '@/constants/theme';
+import { ConversationsProvider } from '@/providers/conversations';
 import { NeighborhoodProvider, useNeighborhood } from '@/providers/neighborhood';
 import { SessionProvider, useSession } from '@/providers/session';
 
@@ -33,8 +34,10 @@ export default function RootLayout() {
       <ThemeProvider value={navTheme}>
         <SessionProvider>
           <NeighborhoodProvider>
-            <StatusBar style={isDark ? 'light' : 'dark'} />
-            <Gate />
+            <ConversationsProvider>
+              <StatusBar style={isDark ? 'light' : 'dark'} />
+              <Gate />
+            </ConversationsProvider>
           </NeighborhoodProvider>
         </SessionProvider>
       </ThemeProvider>
