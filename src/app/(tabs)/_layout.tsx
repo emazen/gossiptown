@@ -3,9 +3,11 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 
 import { S } from '@/constants/strings';
 import { useTheme } from '@/hooks/use-theme';
+import { useUnreadCount } from '@/hooks/use-conversations';
 
 export default function TabsLayout() {
   const t = useTheme();
+  const unread = useUnreadCount();
   return (
     <NativeTabs
       backgroundColor={t.surface}
@@ -24,6 +26,14 @@ export default function TabsLayout() {
           sf={{ default: 'bolt', selected: 'bolt.fill' }}
           src={<NativeTabs.Trigger.VectorIcon family={Ionicons} name="flash" />}
         />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="dms">
+        <NativeTabs.Trigger.Label>{S.tabs.dms}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'envelope', selected: 'envelope.fill' }}
+          src={<NativeTabs.Trigger.VectorIcon family={Ionicons} name="mail" />}
+        />
+        {unread > 0 && <NativeTabs.Trigger.Badge>{String(unread)}</NativeTabs.Trigger.Badge>}
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="me">
         <NativeTabs.Trigger.Label>{S.tabs.me}</NativeTabs.Trigger.Label>

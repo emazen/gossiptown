@@ -114,7 +114,7 @@ export default function MeScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { padding: Spacing.lg, gap: Spacing.md, paddingBottom: 100 },
+  content: { padding: Spacing.lg, gap: Spacing.md },
   h1: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5, marginBottom: Spacing.sm },
   card: { padding: Spacing.lg, borderRadius: Radius.lg, borderWidth: StyleSheet.hairlineWidth, gap: Spacing.xs },
   profileCard: { flexDirection: 'row', alignItems: 'center', gap: Spacing.lg },

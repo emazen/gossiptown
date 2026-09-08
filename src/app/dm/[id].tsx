@@ -1,38 +1,32 @@
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useCallback } from 'react';
 import { ActivityIndicator, Alert, FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Composer } from '@/components/composer';
 import { EmptyState } from '@/components/empty-state';
 import { MessageRow } from '@/components/message-row';
-import { NeighborhoodHeader } from '@/components/neighborhood-header';
-import { Screen } from '@/components/screen';
 import { S } from '@/constants/strings';
 import { Spacing } from '@/constants/theme';
 import { useContentActions } from '@/hooks/use-content-actions';
-import { useMessages } from '@/hooks/use-messages';
+import { useDm } from '@/hooks/use-dm';
 import { useTheme } from '@/hooks/use-theme';
 import type { MessageWithAuthor } from '@/lib/database.types';
 import { friendlyError } from '@/lib/errors';
-import { checkContent } from '@/lib/profanity';
-import { useNeighborhood } from '@/providers/neighborhood';
 import { useSession } from '@/providers/session';
 
 const GROUP_WINDOW_MS = 60_000;
 
-export default function ChatScreen() {
+export default function DmScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const t = useTheme();
+  const insets = useSafeAreaInsets();
   const { userId } = useSession();
-  const { neighborhood } = useNeighborhood();
-  const { messages, loading, error, send, remove, hideAuthor } = useMessages(neighborhood?.id ?? null, userId);
+  const { peer, messages, loading, error, send, remove } = useDm(id, userId);
   const actions = useContentActions();
 
   const onSend = useCallback(
     async (text: string) => {
-      const check = checkContent(text);
-      if (!check.ok) {
-        Alert.alert(check.reason === 'doxxing' ? S.report.reasons.doxxing : S.errors.profanity);
-        return;
-      }
       try {
         await send(text);
       } catch (e) {
@@ -42,7 +36,6 @@ export default function ChatScreen() {
     [send],
   );
 
-  // List is inverted: index 0 is newest. "Previous" message is index+1.
   const renderItem = useCallback(
     ({ item, index }: { item: MessageWithAuthor; index: number }) => {
       const prev = messages[index + 1];
@@ -57,26 +50,25 @@ export default function ChatScreen() {
           grouped={grouped}
           onLongPress={() =>
             actions.open({
-              type: 'message',
+              type: 'dm',
               id: item.id,
               authorId: item.user_id,
-              onBlocked: hideAuthor,
               onDelete: () => remove(item.id),
             })
           }
         />
       );
     },
-    [messages, userId, actions, hideAuthor, remove],
+    [messages, userId, actions, remove],
   );
 
   return (
-    <Screen>
-      <NeighborhoodHeader title={S.chat.title} />
+    <SafeAreaView edges={['bottom']} style={[styles.flex, { backgroundColor: t.background }]}>
+      <Stack.Screen options={{ title: peer?.nickname ?? '', headerBackTitle: S.dms.title }} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={0}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 44 : 0}>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator color={t.accent} />
@@ -88,15 +80,13 @@ export default function ChatScreen() {
             keyExtractor={(x) => x.id}
             renderItem={renderItem}
             contentContainerStyle={[styles.list, messages.length === 0 && styles.listEmpty]}
-            ListEmptyComponent={
-              <EmptyState icon="flash-outline" text={error ? `${S.errors.generic}\n${error}` : S.chat.empty} />
-            }
+            ListEmptyComponent={<EmptyState icon="mail-open-outline" text={error ?? `${peer?.nickname ?? ''} ile yazışmaya başla.`} />}
             keyboardDismissMode="interactive"
           />
         )}
-        <Composer placeholder={S.chat.placeholder} maxLength={500} onSend={onSend} disabled={!neighborhood} />
+        <Composer placeholder={S.dms.placeholder} maxLength={2000} onSend={onSend} />
       </KeyboardAvoidingView>
-    </Screen>
+    </SafeAreaView>
   );
 }
 

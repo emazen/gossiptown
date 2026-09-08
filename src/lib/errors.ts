@@ -6,6 +6,7 @@ export function friendlyError(e: unknown): string {
   const code = typeof e === 'object' && e && 'code' in e ? String((e as { code: unknown }).code) : '';
   if (code === 'P0002' || /rate limited/i.test(msg)) return S.errors.tooFast;
   if (code === 'P0001' || /suspended/i.test(msg)) return 'Hesabın askıya alındı.';
+  if (code === 'P0003' || /cannot (message|add)/i.test(msg)) return S.dms.cannotReach;
   if (/row-level security|violates/i.test(msg)) return S.errors.notInNeighborhood;
   if (/check constraint/i.test(msg)) return S.errors.tooLong;
   if (/network|fetch/i.test(msg)) return S.errors.offline;

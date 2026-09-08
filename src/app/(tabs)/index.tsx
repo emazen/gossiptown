@@ -14,6 +14,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useThreads } from '@/hooks/use-threads';
 import type { ThreadWithAuthor } from '@/lib/database.types';
 import { useNeighborhood } from '@/providers/neighborhood';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ThreadsScreen() {
   const t = useTheme();
@@ -23,6 +24,7 @@ export default function ThreadsScreen() {
     neighborhood?.id ?? null,
   );
   const actions = useContentActions();
+  const insets = useSafeAreaInsets();
 
   const renderItem = useCallback(
     ({ item }: { item: ThreadWithAuthor }) => (
@@ -68,7 +70,10 @@ export default function ThreadsScreen() {
 
       <Pressable
         onPress={() => router.push('/thread/new')}
-        style={({ pressed }) => [styles.fab, { backgroundColor: t.accent, opacity: pressed ? 0.85 : 1 }]}
+        style={({ pressed }) => [
+          styles.fab,
+          { backgroundColor: t.accent, opacity: pressed ? 0.85 : 1, bottom: insets.bottom + Spacing.lg },
+        ]}
         accessibilityLabel={S.threads.newThread}>
         <Ionicons name="add" size={26} color={t.onAccent} />
         <Text style={[styles.fabText, { color: t.onAccent }]}>{S.threads.newThread}</Text>
@@ -79,12 +84,11 @@ export default function ThreadsScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingTop: Spacing.lg, paddingBottom: 120 },
+  list: { paddingTop: Spacing.lg, paddingBottom: 96 },
   listEmpty: { flexGrow: 1 },
   fab: {
     position: 'absolute',
     right: Spacing.lg,
-    bottom: Spacing.xl,
     height: 52,
     paddingLeft: Spacing.md,
     paddingRight: Spacing.lg,

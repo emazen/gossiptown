@@ -34,7 +34,23 @@ export const S = {
   tabs: {
     threads: 'Konular',
     chat: 'Canlı',
+    dms: 'Mesajlar',
     me: 'Ben',
+  },
+
+  dms: {
+    title: 'Mesajlar',
+    empty: 'Henüz kimseyle yazışmadın.\nBir paylaşıma uzun basıp “Mesaj gönder” de.',
+    placeholder: 'Mesaj yaz…',
+    you: 'Sen: ',
+    contacts: 'Kişiler',
+    contactsEmpty: 'Kaydettiğin kimse yok.\nBir paylaşıma uzun basıp “Kişilere ekle” de.',
+    message: 'Mesaj gönder',
+    addContact: 'Kişilere ekle',
+    removeContact: 'Kişilerden çıkar',
+    added: 'Kişilere eklendi.',
+    cannotReach: 'Bu kişiye şu an ulaşamazsın. Aynı mahallede olman veya onu kişilerine eklemiş olman gerekir.',
+    startChat: 'Yaz',
   },
 
   threads: {

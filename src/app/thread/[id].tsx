@@ -16,6 +16,7 @@ import { checkContent } from '@/lib/profanity';
 import { timeAgo } from '@/lib/time';
 import { useSession } from '@/providers/session';
 import { Pressable } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ThreadScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,6 +25,7 @@ export default function ThreadScreen() {
   const { userId } = useSession();
   const { thread, replies, loading, error, reply, removeReply, hideAuthor } = useThreadDetail(id, userId);
   const actions = useContentActions();
+  const insets = useSafeAreaInsets();
 
   const onSend = useCallback(
     async (text: string) => {
@@ -92,12 +94,12 @@ export default function ThreadScreen() {
   }
 
   return (
-    <View style={[styles.flex, { backgroundColor: t.background }]}>
+    <SafeAreaView edges={['bottom']} style={[styles.flex, { backgroundColor: t.background }]}>
       <Stack.Screen options={{ title: thread.author?.nickname ?? '', headerBackTitle: S.threads.title }} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top + 44 : 0}>
         <FlatList
           data={replies}
           keyExtractor={(x) => x.id}
@@ -133,7 +135,7 @@ export default function ThreadScreen() {
         />
         <Composer placeholder={S.threads.replyPlaceholder} maxLength={1000} onSend={onSend} />
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

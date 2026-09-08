@@ -163,6 +163,60 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['blocks']['Insert']>;
         Relationships: [];
       };
+      contacts: {
+        Row: { owner_id: string; contact_id: string; created_at: string };
+        Insert: { owner_id: string; contact_id: string; created_at?: string };
+        Update: Partial<Database['public']['Tables']['contacts']['Insert']>;
+        Relationships: [];
+      };
+      conversations: {
+        Row: {
+          id: string;
+          user_a: string;
+          user_b: string;
+          created_at: string;
+          last_message_at: string | null;
+          last_message: string | null;
+          last_sender_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_a: string;
+          user_b: string;
+          created_at?: string;
+          last_message_at?: string | null;
+          last_message?: string | null;
+          last_sender_id?: string | null;
+        };
+        Update: Partial<Database['public']['Tables']['conversations']['Insert']>;
+        Relationships: [];
+      };
+      conversation_reads: {
+        Row: { conversation_id: string; user_id: string; last_read_at: string };
+        Insert: { conversation_id: string; user_id: string; last_read_at?: string };
+        Update: Partial<Database['public']['Tables']['conversation_reads']['Insert']>;
+        Relationships: [];
+      };
+      dm_messages: {
+        Row: {
+          id: string;
+          conversation_id: string;
+          sender_id: string;
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          conversation_id: string;
+          sender_id: string;
+          body: string;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: Partial<Database['public']['Tables']['dm_messages']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -174,6 +228,10 @@ export interface Database {
         Args: { p_nickname: string; p_avatar_hue: number };
         Returns: Database['public']['Tables']['profiles']['Row'];
       };
+      add_contact: { Args: { p_other: string }; Returns: undefined };
+      start_conversation: { Args: { p_other: string }; Returns: string };
+      mark_read: { Args: { p_conversation: string }; Returns: undefined };
+      can_reach: { Args: { other: string }; Returns: boolean };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -189,6 +247,13 @@ export type Message = Tables<'messages'>;
 export type Thread = Tables<'threads'>;
 export type Reply = Tables<'replies'>;
 export type Block = Tables<'blocks'>;
+export type Conversation = Tables<'conversations'>;
+export type DmMessage = Tables<'dm_messages'>;
+
+export type ConversationWithPeer = Conversation & {
+  peer: Author;
+  unread: boolean;
+};
 
 /** Public shape of an author, joined onto content rows. */
 export type Author = Pick<Profile, 'id' | 'nickname' | 'avatar_hue'>;

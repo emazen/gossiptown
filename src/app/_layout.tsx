@@ -78,6 +78,8 @@ function Gate() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="thread/[id]" options={{ headerShown: true, title: '' }} />
         <Stack.Screen name="thread/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="dm/[id]" options={{ headerShown: true, title: '' }} />
+        <Stack.Screen name="contacts" options={{ headerShown: true, title: '' }} />
       </Stack.Protected>
       <Stack.Protected guard={!ready}>
         <Stack.Screen name="onboarding" />
