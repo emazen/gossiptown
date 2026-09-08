@@ -19,7 +19,7 @@ Launch cities: İstanbul, Ankara, İzmir.
 
 1. Create a Supabase project at https://supabase.com.
 2. In the Dashboard: **Authentication → Providers → Anonymous** → enable.
-3. Open **SQL Editor**, paste `supabase/migrations/0001_init.sql`, run it.
+3. Open **SQL Editor**, paste `supabase/migrations/20260908000000_init.sql`, run it.
 4. Copy `.env.example` to `.env` and fill in the URL and anon key from **Project Settings → API**.
 5. Install and start:
 
