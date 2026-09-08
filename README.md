@@ -2,10 +2,11 @@
 
 Hyperlocal, anonymous gossip for Turkish neighborhoods. You only see the chat for the mahalle you are physically standing in.
 
-Two surfaces per neighborhood:
+Two surfaces per neighborhood, plus private messages:
 
 - **Canlı** – a live chat room.
 - **Konular** – threads. One headline, everyone replies underneath. Newest at the top.
+- **Mesajlar** – 1:1 direct messages. Long-press anyone's post to message them or save them to your contacts. You can DM someone while you share a neighborhood, or any time if they are in your contacts. Blocking stops DMs both ways.
 
 Launch cities: İstanbul, Ankara, İzmir.
 
@@ -37,7 +38,12 @@ Press `i` for the iOS simulator or `a` for Android. Simulators sit in Cupertino,
 3. Every read and write policy checks `my_neighborhood_id()`, which only returns a value if the location was verified in the last 24 hours.
 4. The app re-verifies on foreground after 30 minutes.
 
-Known gap: the client sends the geocoded names, so a modified client could claim any neighborhood. Fix before public launch by moving reverse geocoding into a Supabase Edge Function. The lat/lng are already stored for that.
+Known gaps, both fixed by the same change:
+
+1. The client sends the geocoded names, so a modified client could claim any neighborhood.
+2. Apple and Google disagree on neighborhood names. At the same coordinates in Kadıköy, the iOS simulator returned "Moda" while the official mahalle is "Caferağa". iOS and Android users standing next to each other could land in different rooms.
+
+Fix before public launch: reverse geocode server-side in a Supabase Edge Function against an official mahalle boundary dataset (Turkish mahalle polygons are available from OpenStreetMap). Only lat/lng would travel from the client. Alternative for launch: gate on ilçe (district) instead of mahalle, which geocoders agree on and which fills rooms faster.
 
 ## Moderation
 
@@ -53,12 +59,14 @@ Known gap: the client sends the geocoded names, so a modified client could claim
 src/
   app/            expo-router screens
     onboarding    nickname + location permission
-    (tabs)/       index = threads, chat = live, me = profile
+    (tabs)/       index = threads, chat = live, dms = inbox, me = profile
     thread/       [id] detail, new = compose modal
+    dm/[id]       1:1 conversation
+    contacts      saved people
   components/     shared UI
   hooks/          data hooks with realtime subscriptions
   lib/            supabase client, geocoding, validation
-  providers/      session (anon auth) and neighborhood (location) context
+  providers/      session (anon auth), neighborhood (location), conversations (DM inbox)
   constants/      theme tokens, all Turkish UI strings
 supabase/
   migrations/     schema, RLS, triggers, RPCs
