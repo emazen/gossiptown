@@ -37,19 +37,27 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
 
     let cancelled = false;
+    // Refresh timer only starts on an AppState change otherwise; kick it on launch.
+    supabase.auth.startAutoRefresh();
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      if (__DEV__) console.log('[session] restoring');
+      const { data, error: getErr } = await supabase.auth.getSession();
+      if (__DEV__) console.log('[session] getSession', data.session ? 'found' : 'none', getErr?.message ?? '');
       if (data.session) {
         if (!cancelled) setSession(data.session);
         return;
       }
       const { data: anon, error: anonErr } = await supabase.auth.signInAnonymously();
       if (cancelled) return;
+      if (__DEV__) console.log('[session] anonymous sign-in', anonErr?.message ?? 'ok');
       if (anonErr) setError(anonErr.message);
       else setSession(anon.session);
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, s) => setSession(s));
+    const { data: sub } = supabase.auth.onAuthStateChange((evt, s) => {
+      if (__DEV__) console.log('[session] event', evt, s ? 'session' : 'null');
+      setSession(s);
+    });
     return () => {
       cancelled = true;
       sub.subscription.unsubscribe();
@@ -67,6 +75,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     (async () => {
       const { data, error: err } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
       if (cancelled) return;
+      if (__DEV__) console.log('[session] profile', data ? 'found' : 'none', err?.message ?? '');
       if (err) setError(err.message);
       setProfile(data ?? null);
       setLoading(false);

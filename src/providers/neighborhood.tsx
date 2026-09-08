@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { AppState } from 'react-native';
 
 import type { Neighborhood } from '@/lib/database.types';
+import { errorMessage } from '@/lib/errors';
 import { locate, type ResolvedPlace } from '@/lib/geo';
 import { supabase } from '@/lib/supabase';
 import { useSession } from '@/providers/session';
@@ -82,8 +83,9 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
       setStatus('ready');
       AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ neighborhood: nb, place: res.place, at })).catch(() => {});
     } catch (e) {
+      if (__DEV__) console.warn('set_location failed', e);
       setStatus('error');
-      setError(e instanceof Error ? e.message : String(e));
+      setError(errorMessage(e));
     } finally {
       inFlight.current = false;
     }

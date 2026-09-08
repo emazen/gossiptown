@@ -1,8 +1,8 @@
 # Third Place
 
-Hyperlocal, anonymous gossip for Turkish neighborhoods. You only see the chat for the mahalle you are physically standing in.
+Hyperlocal, anonymous gossip for Turkey. You only see the room for the ilçe (district) you are physically standing in.
 
-Two surfaces per neighborhood, plus private messages:
+Two surfaces per district, plus private messages:
 
 - **Canlı** – a live chat room.
 - **Konular** – threads. One headline, everyone replies underneath. Newest at the top.
@@ -33,21 +33,19 @@ Press `i` for the iOS simulator or `a` for Android. Simulators sit in Cupertino,
 
 ## How location gating works
 
-1. Client asks for foreground location, reverse-geocodes to (il, ilçe, mahalle).
-2. Calls the `set_location` RPC, which creates the neighborhood row if it is new and stores the user's position.
+1. Client asks for foreground location, reverse-geocodes to (il, ilçe).
+2. Calls the `set_location` RPC, which canonicalizes the district against a seeded list of all 94 districts in the three cities, creates the room row if it is new, and stores the user's position. Unknown districts are rejected.
 3. Every read and write policy checks `my_neighborhood_id()`, which only returns a value if the location was verified in the last 24 hours.
 4. The app re-verifies on foreground after 30 minutes.
 
-Known gaps, both fixed by the same change:
+Rooms are districts rather than mahalle on purpose: Apple and Google disagree on neighborhood names (the iOS simulator says "Moda" where the official mahalle is "Caferağa"), and district-sized rooms fill up faster. Mahalle rooms can come back later with a server-side polygon lookup.
 
-1. The client sends the geocoded names, so a modified client could claim any neighborhood.
-2. Apple and Google disagree on neighborhood names. At the same coordinates in Kadıköy, the iOS simulator returned "Moda" while the official mahalle is "Caferağa". iOS and Android users standing next to each other could land in different rooms.
-
-Fix before public launch: reverse geocode server-side in a Supabase Edge Function against an official mahalle boundary dataset (Turkish mahalle polygons are available from OpenStreetMap). Only lat/lng would travel from the client. Alternative for launch: gate on ilçe (district) instead of mahalle, which geocoders agree on and which fills rooms faster.
+Known gap: the client sends the geocoded district name, so a modified client could claim any district. Fix before public launch by reverse geocoding lat/lng in a Supabase Edge Function. The lat/lng are already stored.
 
 ## Moderation
 
-- Long-press any message, thread, or reply: report (with reason), block the author, or delete your own.
+- Long-press any message, thread, or reply: message the author, save them as a contact, report (with reason), block, or delete your own.
+- Profile photos: tap your avatar on the Ben tab. Stored in a public `avatars` bucket, one folder per user, 2 MB cap. Unmoderated for now.
 - Blocks are enforced in RLS, so blocked users disappear from every query.
 - Rate limits are Postgres triggers: 5 messages / 10s, 5 replies / 30s, 3 threads / 10min.
 - A client-side filter catches phone numbers and TC kimlik numbers before they are sent.
@@ -79,3 +77,5 @@ supabase/
 - [ ] Apple: EULA acceptance is in onboarding; add a link to full terms
 - [ ] Push notifications for thread replies
 - [ ] Real app icon and splash
+- [ ] Apple/Google sign-in linking so accounts survive reinstalls
+- [ ] Avatar moderation
