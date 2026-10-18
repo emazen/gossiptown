@@ -72,11 +72,11 @@ export default function ThreadsScreen() {
         onPress={() => router.push('/thread/new')}
         style={({ pressed }) => [
           styles.fab,
-          { backgroundColor: t.ink, transform: [{ scale: pressed ? 0.97 : 1 }], bottom: insets.bottom + Spacing.lg },
+          { backgroundColor: t.accent, transform: [{ scale: pressed ? 0.97 : 1 }], bottom: insets.bottom + Spacing.lg },
         ]}
         accessibilityLabel={S.threads.newThread}>
-        <Ionicons name="create-outline" size={20} color={t.onInk} />
-        <Text style={[styles.fabText, { color: t.onInk }]}>{S.threads.newThread}</Text>
+        <Ionicons name="create-outline" size={20} color={t.onAccent} />
+        <Text style={[styles.fabText, { color: t.onAccent }]}>{S.threads.newThread}</Text>
       </Pressable>
     </Screen>
   );
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    boxShadow: '0 8px 24px rgba(28,26,23,0.18), 0 1px 3px rgba(28,26,23,0.12)',
+    boxShadow: '0 8px 22px rgba(229,36,59,0.32), 0 1px 3px rgba(26,23,20,0.14)',
   },
   fabText: { fontSize: 15, fontWeight: '600', letterSpacing: -0.1 },
 });

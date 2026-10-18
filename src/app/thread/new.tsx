@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
 import { S } from '@/constants/strings';
-import { Serif, Spacing, Type } from '@/constants/theme';
+import { Display, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { createThread } from '@/hooks/use-threads';
 import { friendlyError } from '@/lib/errors';
@@ -105,10 +105,10 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.lg,
-    fontFamily: Serif.semibold,
-    fontSize: 27,
-    lineHeight: 33,
-    letterSpacing: -0.4,
+    fontFamily: Display.bold,
+    fontSize: 28,
+    lineHeight: 32,
+    letterSpacing: -0.8,
   },
   body: { flex: 1, paddingHorizontal: Spacing.xl, paddingTop: Spacing.md, fontSize: 17, lineHeight: 26, textAlignVertical: 'top' },
   footer: {

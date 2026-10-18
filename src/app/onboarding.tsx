@@ -6,7 +6,7 @@ import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Screen } from '@/components/screen';
 import { S } from '@/constants/strings';
-import { Radius, Serif, Spacing, Type } from '@/constants/theme';
+import { Display, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { randomHue, randomNickname, validateNickname } from '@/lib/nickname';
 import { useNeighborhood } from '@/providers/neighborhood';
@@ -56,7 +56,7 @@ function NameStep() {
     <Screen edges={['top', 'bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
         <View style={styles.body}>
-          <Text style={[styles.brand, { color: t.accent }]}>{S.appName}</Text>
+          <Text style={[styles.brand, { color: t.onHighlight, backgroundColor: t.highlight }]}>{S.appName}</Text>
           <Text style={[styles.h1, { color: t.text }]}>{S.onboarding.pickNameTitle}</Text>
           <Text style={[styles.p, { color: t.textSecondary }]}>{S.onboarding.pickNameBody}</Text>
 
@@ -134,7 +134,7 @@ function LocationStep() {
   return (
     <Screen edges={['top', 'bottom']}>
       <View style={styles.body}>
-        <Text style={[styles.brand, { color: t.accent }]}>{S.appName}</Text>
+        <Text style={[styles.brand, { color: t.onHighlight, backgroundColor: t.highlight }]}>{S.appName}</Text>
         <View style={[styles.iconWrap, { borderColor: t.border }]}>
           <Ionicons name="location-outline" size={28} color={t.text} />
         </View>
@@ -160,10 +160,10 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: { flex: 1, padding: Spacing.xl, gap: Spacing.lg, justifyContent: 'center' },
   footer: { padding: Spacing.xl, gap: Spacing.sm },
-  brand: { fontFamily: Serif.italic, fontSize: 20, lineHeight: 26 },
+  brand: { fontFamily: Display.extrabold, fontSize: 22, lineHeight: 28, letterSpacing: -0.6, alignSelf: 'flex-start', paddingHorizontal: 6, overflow: 'hidden', borderRadius: 4 },
   h1: { ...Type.display },
   p: { fontSize: 17, lineHeight: 25 },
-  tagline: { fontFamily: Serif.italic, fontSize: 16 },
+  tagline: { fontFamily: Display.medium, fontSize: 16 },
   iconWrap: {
     width: 64,
     height: 64,
@@ -180,10 +180,10 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  nameInput: { flex: 1, fontFamily: Serif.medium, fontSize: 19 },
+  nameInput: { flex: 1, fontFamily: Display.semibold, fontSize: 19, letterSpacing: -0.3 },
   err: { fontSize: 13, marginTop: -Spacing.sm },
   rules: { padding: Spacing.lg, borderRadius: Radius.lg, borderWidth: StyleSheet.hairlineWidth, gap: Spacing.md },
   ruleRow: { flexDirection: 'row', gap: Spacing.md, alignItems: 'flex-start' },
-  ruleNum: { fontFamily: Serif.semibold, fontSize: 16, lineHeight: 20, width: 12 },
+  ruleNum: { fontFamily: Display.extrabold, fontSize: 16, lineHeight: 20, width: 12 },
   rule: { flex: 1, fontSize: 14, lineHeight: 20 },
 });

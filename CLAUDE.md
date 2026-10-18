@@ -38,15 +38,15 @@ src/app/                 expo-router routes
 src/providers/           session (anon auth + profile), neighborhood (location → room), conversations (DM inbox, single realtime sub)
 src/hooks/               use-messages / use-threads / use-replies / use-dm / use-contacts / use-content-actions (long-press menu) / use-authors (profile cache)
 src/lib/                 supabase client, database.types (hand-written), geo (GPS coords; geocode only for the "not here yet" city name), avatar (upload), profanity (doxxing filter), errors, nickname, time
-src/constants/           theme.ts (colors, Serif fonts, Type scale, spacing), strings.ts (ALL user-facing copy)
-src/components/          Screen, ScreenHeader (serif masthead), NeighborhoodHeader, Avatar, Composer, MessageRow, ThreadCard (feed row), Button, EmptyState
+src/constants/           theme.ts (colors, Display fonts, Type scale, spacing), strings.ts (ALL user-facing copy)
+src/components/          Screen, ScreenHeader (display masthead), NeighborhoodHeader, Avatar, Composer, MessageRow, ThreadCard (feed row), Button, EmptyState
 supabase/migrations/     schema history, applied in order; never edit an applied file, add a new one
 supabase/config.toml     local Supabase config (anonymous sign-ins enabled)
 ```
 
 ## Conventions
 
-- **Design: a neighbourhood paper, not a social app.** Warm paper/ink palette, Fraunces serif (loaded in `_layout.tsx`) for display text via `Type.display/headline/title/name/aside`, system font for body/UI. Primary actions are `ink` (flips in dark mode); `accent` (brick vermilion) only for small signals: links, unread, reply counts, the location dot. Feeds are hairline-separated rows, not cards; settings-style screens use inset grouped lists. No uppercase tracked labels, no green checkmarks, no bright avatar colors. Serif text styles must not set `fontWeight` (the weight is the font file).
+- **Design: tabloid energy on a premium base.** Warm cream paper and ink for the layout; Bricolage Grotesque (loaded in `_layout.tsx`) for display text via `Type.display/headline/title/name/aside`, system font for body/UI. `accent` is lipstick red: primary buttons, the Yeni konu button, my chat bubbles, reply counts, the selected tab. `highlight` is highlighter yellow for things worth a look: the place chip, the "Gündemde" tag (2+ replies, last one within 24h), the onboarding wordmark. Avatars use candy tones. Feeds are hairline-separated rows, not cards; settings-style screens use inset grouped lists. No uppercase tracked labels, no green checkmarks. Display text styles must not set `fontWeight` (the weight is the font file).
 - **Copy lives in `src/constants/strings.ts`.** Never inline Turkish strings in screens. Tone is casual and a bit cheeky.
 - **Every new table gets RLS + policies in the same migration.** Reads/writes on room content must check `public.my_neighborhood_id()` (null if the user's location is older than 24h). Blocked authors are filtered in RLS via `public.is_blocked()`.
 - **Writes that need cross-row checks go through `security definer` RPCs** (`ensure_profile`, `set_location`, `start_conversation`, `add_contact`, `mark_read`, `moderate`). Plain inserts are fine when RLS `with check` suffices.
@@ -79,7 +79,7 @@ supabase/config.toml     local Supabase config (anonymous sign-ins enabled)
 
 - 2026-09-07: Expo + Supabase, no custom backend; anonymous auth to kill onboarding friction; persistent pseudonyms (not per-thread anon) so blocking and DMs work.
 - 2026-09-08: DMs + contacts added at Emre's request. Rooms switched from mahalle to ilçe (Emre's call, "option 1") because Apple/Google disagree on mahalle names and bigger rooms fix cold start. Profile pictures added.
-- 2026-10-18: Renamed Third Place → Gossiptown and redesigned the UI as a "mahalle gazetesi" (editorial serif, paper and ink) to drop the generic pink-card look.
+- 2026-10-18: Renamed Third Place → Gossiptown and redesigned the UI away from the generic pink-card look: first as an editorial serif "mahalle gazetesi", then (Emre: needs more color, it's a gossip app) to Bricolage Grotesque with lipstick red and highlighter yellow on the same paper base.
 - 2026-10-18: Moderation lives in the app for moderators (not a separate dashboard) and auto-hides at 3 reports, so one person can keep the 24h promise from a phone.
 - 2026-10-18: Server-side district lookup with PostGIS polygons in Postgres instead of an Edge Function: no extra service, no geocoding API key or quota, and the check runs inside `set_location`'s transaction.
 

@@ -11,8 +11,8 @@ export default function TabsLayout() {
   return (
     <NativeTabs
       backgroundColor={t.background}
-      iconColor={{ default: t.textTertiary, selected: t.text }}
-      labelStyle={{ default: { color: t.textTertiary }, selected: { color: t.text } }}>
+      iconColor={{ default: t.textTertiary, selected: t.accent }}
+      labelStyle={{ default: { color: t.textTertiary }, selected: { color: t.accent } }}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>{S.tabs.threads}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon

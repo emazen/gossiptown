@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Props = { title: string; subtitle?: ReactNode; right?: ReactNode };
 
-/** Serif masthead for tab screens. */
+/** Display masthead for tab screens. */
 export function ScreenHeader({ title, subtitle, right }: Props) {
   const t = useTheme();
   return (

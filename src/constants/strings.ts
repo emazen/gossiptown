@@ -65,6 +65,7 @@ export const S = {
     replyPlaceholder: 'Yanıt yaz…',
     op: 'Konuyu açan',
     mine: 'Sen',
+    hot: 'Gündemde',
   },
 
   chat: {

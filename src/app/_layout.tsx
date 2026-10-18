@@ -1,10 +1,10 @@
 import {
-  Fraunces_400Regular,
-  Fraunces_400Regular_Italic,
-  Fraunces_500Medium,
-  Fraunces_600SemiBold,
+  BricolageGrotesque_500Medium,
+  BricolageGrotesque_600SemiBold,
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
   useFonts,
-} from '@expo-google-fonts/fraunces';
+} from '@expo-google-fonts/bricolage-grotesque';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { Colors, Serif, Spacing, Type } from '@/constants/theme';
+import { Colors, Display, Spacing, Type } from '@/constants/theme';
 import { ConversationsProvider } from '@/providers/conversations';
 import { NeighborhoodProvider, useNeighborhood } from '@/providers/neighborhood';
 import { SessionProvider, useSession } from '@/providers/session';
@@ -24,10 +24,10 @@ export default function RootLayout() {
   const isDark = scheme === 'dark';
   const c = isDark ? Colors.dark : Colors.light;
   const [fontsLoaded, fontError] = useFonts({
-    Fraunces_400Regular,
-    Fraunces_400Regular_Italic,
-    Fraunces_500Medium,
-    Fraunces_600SemiBold,
+    BricolageGrotesque_500Medium,
+    BricolageGrotesque_600SemiBold,
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
   });
 
   const navTheme = {
@@ -97,7 +97,7 @@ function Gate({ fontsReady }: { fontsReady: boolean }) {
         headerShadowVisible: false,
         headerStyle: { backgroundColor: c.background },
         headerTintColor: c.text,
-        headerTitleStyle: { fontFamily: Serif.semibold, fontSize: 18 },
+        headerTitleStyle: { fontFamily: Display.bold, fontSize: 18 },
         headerBackButtonDisplayMode: 'minimal',
         contentStyle: { backgroundColor: c.background },
       }}>

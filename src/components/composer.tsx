@@ -48,12 +48,12 @@ export function Composer({ placeholder, maxLength, onSend, disabled }: Props) {
         onPress={submit}
         disabled={!canSend}
         hitSlop={8}
-        style={[styles.send, { backgroundColor: canSend ? t.ink : t.surfaceElevated }]}
+        style={[styles.send, { backgroundColor: canSend ? t.accent : t.surfaceElevated }]}
         accessibilityLabel="Gönder">
         {sending ? (
-          <ActivityIndicator color={t.onInk} size="small" />
+          <ActivityIndicator color={t.onAccent} size="small" />
         ) : (
-          <Ionicons name="arrow-up" size={19} color={canSend ? t.onInk : t.textTertiary} />
+          <Ionicons name="arrow-up" size={19} color={canSend ? t.onAccent : t.textTertiary} />
         )}
       </Pressable>
     </View>

@@ -7,7 +7,7 @@ import { ActionSheetIOS, ActivityIndicator, Alert, Linking, Platform, Pressable,
 import { Avatar } from '@/components/avatar';
 import { Screen } from '@/components/screen';
 import { S } from '@/constants/strings';
-import { Radius, Serif, Spacing, Type } from '@/constants/theme';
+import { Display, Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { pickAndUploadAvatar, removeAvatar } from '@/lib/avatar';
 import type { Author } from '@/lib/database.types';
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingHorizontal: Spacing.lg, minHeight: 52, paddingVertical: Spacing.md },
   rowText: { flex: 1, gap: 2 },
   ruleRow: { flexDirection: 'row', gap: Spacing.md, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md },
-  ruleNum: { fontFamily: Serif.semibold, fontSize: 17, lineHeight: 21, width: 14 },
+  ruleNum: { fontFamily: Display.extrabold, fontSize: 17, lineHeight: 21, width: 14 },
   ruleText: { flex: 1 },
   version: { textAlign: 'center' },
 });

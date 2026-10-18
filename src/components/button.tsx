@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 type Props = PropsWithChildren<{
   onPress: () => void;
-  /** primary: ink. secondary: hairline outline. ghost: plain text. danger: red text outline. */
+  /** primary: lipstick red. secondary: hairline outline. ghost: plain text. danger: red text outline. */
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   loading?: boolean;
   disabled?: boolean;
@@ -15,8 +15,8 @@ type Props = PropsWithChildren<{
 
 export function Button({ children, onPress, variant = 'primary', loading, disabled, style }: Props) {
   const t = useTheme();
-  const bg = variant === 'primary' ? t.ink : 'transparent';
-  const fg = variant === 'primary' ? t.onInk : variant === 'danger' ? t.danger : t.text;
+  const bg = variant === 'primary' ? t.accent : 'transparent';
+  const fg = variant === 'primary' ? t.onAccent : variant === 'danger' ? t.danger : t.text;
   const outlined = variant === 'secondary' || variant === 'danger';
   const off = disabled || loading;
   return (

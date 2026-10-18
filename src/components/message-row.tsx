@@ -18,7 +18,7 @@ type Props = {
 export const MessageRow = memo(function MessageRow({ message, mine, grouped, onLongPress }: Props) {
   const t = useTheme();
   const author = message.author;
-  const fg = mine ? t.onInk : t.text;
+  const fg = mine ? t.onAccent : t.text;
   return (
     <Pressable onLongPress={onLongPress} delayLongPress={300} style={[styles.row, mine && styles.rowMine, grouped && styles.rowGrouped]}>
       {!mine && (

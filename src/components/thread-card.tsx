@@ -3,12 +3,23 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
 import { S } from '@/constants/strings';
-import { Spacing, Type } from '@/constants/theme';
+import { Radius, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { ThreadWithAuthor } from '@/lib/database.types';
 import { timeAgo } from '@/lib/time';
 
 type Props = { thread: ThreadWithAuthor; onPress: () => void; onLongPress: () => void };
+
+const HOT_MIN_REPLIES = 2;
+const HOT_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+/** People are talking about it right now. */
+function isHot(thread: ThreadWithAuthor): boolean {
+  return (
+    thread.reply_count >= HOT_MIN_REPLIES &&
+    Date.now() - new Date(thread.last_activity_at).getTime() < HOT_WINDOW_MS
+  );
+}
 
 /** One headline in the feed column: byline, serif title, standfirst, reply count. */
 export const ThreadCard = memo(function ThreadCard({ thread, onPress, onLongPress }: Props) {
@@ -27,6 +38,9 @@ export const ThreadCard = memo(function ThreadCard({ thread, onPress, onLongPres
           <Text style={{ color: t.text }}>{a?.nickname ?? '…'}</Text>
           {`  ·  ${timeAgo(thread.created_at)}`}
         </Text>
+        {isHot(thread) ? (
+          <Text style={[styles.hot, { backgroundColor: t.highlight, color: t.onHighlight }]}>{S.threads.hot}</Text>
+        ) : null}
       </View>
       <Text style={[Type.title, { color: t.text }]}>{thread.title}</Text>
       {thread.body ? (
@@ -49,6 +63,16 @@ const styles = StyleSheet.create({
   row: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg + 2, gap: 6 },
   byline: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 2 },
   bylineText: { flexShrink: 1 },
+  hot: {
+    marginLeft: 'auto',
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '800',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: Radius.sm,
+    overflow: 'hidden',
+  },
   footer: { marginTop: 4 },
   rule: { height: StyleSheet.hairlineWidth, marginTop: Spacing.lg + 2 },
 });

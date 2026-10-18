@@ -1,12 +1,12 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Serif } from '@/constants/theme';
+import { Display } from '@/constants/theme';
 import { hueColor } from '@/lib/nickname';
 
 type Props = { nickname: string; hue: number; url?: string | null; size?: number };
 
-/** Photo if the user uploaded one, otherwise a serif initial on a muted tone. */
+/** Photo if the user uploaded one, otherwise a bold initial on a candy tone. */
 export function Avatar({ nickname, hue, url, size = 32 }: Props) {
   const radius = size / 2;
   if (url) {
@@ -31,5 +31,5 @@ export function Avatar({ nickname, hue, url, size = 32 }: Props) {
 
 const styles = StyleSheet.create({
   wrap: { alignItems: 'center', justifyContent: 'center' },
-  initial: { color: '#FFFFFF', fontFamily: Serif.medium },
+  initial: { color: '#FFFFFF', fontFamily: Display.bold },
 });
