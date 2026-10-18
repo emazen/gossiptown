@@ -20,6 +20,7 @@ export function useDm(conversationId: string, userId: string | null) {
       body: m.body,
       created_at: m.created_at,
       deleted_at: m.deleted_at,
+      hidden_at: m.hidden_at,
       author: m.sender_id === userId ? me : other,
     }),
     [userId],

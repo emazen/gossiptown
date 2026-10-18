@@ -1,4 +1,4 @@
-# Third Place
+# Gossiptown
 
 Hyperlocal, anonymous gossip for Turkey. You only see the room for the ilçe (district) you are physically standing in.
 
@@ -44,12 +44,14 @@ The client never names its district, so a modified client can no longer join a r
 
 ## Moderation
 
-- Long-press any message, thread, or reply: message the author, save them as a contact, report (with reason), block, or delete your own.
+- Long-press any message, thread, reply, or DM: report (with reason), block, or delete your own. Room content also offers message the author and save as contact.
 - Profile photos: tap your avatar on the Ben tab. Stored in a public `avatars` bucket, one folder per user, 2 MB cap. Unmoderated for now.
 - Blocks are enforced in RLS, so blocked users disappear from every query.
 - Rate limits are Postgres triggers: 5 messages / 10s, 5 replies / 30s, 3 threads / 10min.
 - A client-side filter catches phone numbers and TC kimlik numbers before they are sent.
-- `reports` table is write-only for users. Review it from the Supabase dashboard for now.
+- Anything reported by 3 different people is hidden automatically (its author still sees it) until a moderator decides.
+- Moderators get a Moderasyon card on the Ben tab: the queue of reported items, oldest first, with remove / ban / remove photo / dismiss. Make someone a moderator in the SQL editor: `insert into public.moderators (user_id) values ('<profile id>');`
+- The Ben tab states the 24-hour review promise and has a "Bize yaz" contact link (`SUPPORT_EMAIL` in `src/lib/env.ts`).
 
 ## Structure
 
@@ -73,7 +75,7 @@ supabase/
 ## Before store submission
 
 - [x] Server-side district lookup (see above)
-- [ ] Moderation dashboard or at least an email digest of reports
+- [x] Moderation queue in the app (still to do: alert moderators when a report arrives)
 - [ ] Apple: EULA acceptance is in onboarding; add a link to full terms
 - [ ] Push notifications for thread replies
 - [ ] Real app icon and splash

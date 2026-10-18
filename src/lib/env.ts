@@ -12,4 +12,7 @@ export const ENV = {
   mockLocation: process.env.EXPO_PUBLIC_MOCK_LOCATION ?? '',
 };
 
+/** Where users reach a human (shown on the Ben tab; Apple requires a contact for UGC apps). */
+export const SUPPORT_EMAIL = 'emre.e@playablefactory.com';
+
 export const isSupabaseConfigured = Boolean(ENV.supabaseUrl && ENV.supabaseAnonKey);

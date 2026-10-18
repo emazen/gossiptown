@@ -72,11 +72,11 @@ export default function ThreadsScreen() {
         onPress={() => router.push('/thread/new')}
         style={({ pressed }) => [
           styles.fab,
-          { backgroundColor: t.accent, opacity: pressed ? 0.85 : 1, bottom: insets.bottom + Spacing.lg },
+          { backgroundColor: t.ink, transform: [{ scale: pressed ? 0.97 : 1 }], bottom: insets.bottom + Spacing.lg },
         ]}
         accessibilityLabel={S.threads.newThread}>
-        <Ionicons name="add" size={26} color={t.onAccent} />
-        <Text style={[styles.fabText, { color: t.onAccent }]}>{S.threads.newThread}</Text>
+        <Ionicons name="create-outline" size={20} color={t.onInk} />
+        <Text style={[styles.fabText, { color: t.onInk }]}>{S.threads.newThread}</Text>
       </Pressable>
     </Screen>
   );
@@ -84,19 +84,19 @@ export default function ThreadsScreen() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingTop: Spacing.lg, paddingBottom: 96 },
+  list: { paddingBottom: 112 },
   listEmpty: { flexGrow: 1 },
   fab: {
     position: 'absolute',
-    right: Spacing.lg,
-    height: 52,
-    paddingLeft: Spacing.md,
-    paddingRight: Spacing.lg,
-    borderRadius: 26,
+    right: Spacing.xl,
+    height: 48,
+    paddingLeft: 16,
+    paddingRight: 20,
+    borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
-    boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
+    gap: 8,
+    boxShadow: '0 8px 24px rgba(28,26,23,0.18), 0 1px 3px rgba(28,26,23,0.12)',
   },
-  fabText: { fontSize: 15, fontWeight: '700' },
+  fabText: { fontSize: 15, fontWeight: '600', letterSpacing: -0.1 },
 });

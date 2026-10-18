@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { Radius, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
@@ -33,7 +33,7 @@ export function Composer({ placeholder, maxLength, onSend, disabled }: Props) {
   };
 
   return (
-    <View style={[styles.bar, { backgroundColor: t.surface, borderTopColor: t.border }]}>
+    <View style={[styles.bar, { backgroundColor: t.background, borderTopColor: t.border }]}>
       <TextInput
         value={text}
         onChangeText={setText}
@@ -41,19 +41,19 @@ export function Composer({ placeholder, maxLength, onSend, disabled }: Props) {
         placeholderTextColor={t.textTertiary}
         maxLength={maxLength}
         multiline
-        style={[styles.input, { color: t.text, backgroundColor: t.surfaceElevated }]}
+        style={[styles.input, { color: t.text, backgroundColor: t.surface, borderColor: t.border }]}
         editable={!disabled}
       />
       <Pressable
         onPress={submit}
         disabled={!canSend}
         hitSlop={8}
-        style={[styles.send, { backgroundColor: canSend ? t.accent : t.surfaceElevated }]}
+        style={[styles.send, { backgroundColor: canSend ? t.ink : t.surfaceElevated }]}
         accessibilityLabel="Gönder">
         {sending ? (
-          <ActivityIndicator color={t.onAccent} size="small" />
+          <ActivityIndicator color={t.onInk} size="small" />
         ) : (
-          <Ionicons name="arrow-up" size={20} color={canSend ? t.onAccent : t.textTertiary} />
+          <Ionicons name="arrow-up" size={19} color={canSend ? t.onInk : t.textTertiary} />
         )}
       </Pressable>
     </View>
@@ -66,7 +66,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   input: {
@@ -76,7 +77,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: 10,
     paddingBottom: 10,
-    borderRadius: Radius.lg,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
     fontSize: 16,
     lineHeight: 20,
   },

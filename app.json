@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Third Place",
-    "slug": "third-place",
+    "name": "Gossiptown",
+    "slug": "gossiptown",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "thirdplace",
+    "scheme": "gossiptown",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.thirdplace.app",
+      "bundleIdentifier": "com.gossiptown.app",
       "supportsTablet": false,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Third Place, sadece bulunduğun mahallenin sohbetini göstermek için konumunu kullanır.",
+        "NSLocationWhenInUseUsageDescription": "Gossiptown, sadece bulunduğun mahallenin sohbetini göstermek için konumunu kullanır.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -24,7 +24,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.thirdplace.app",
+      "package": "com.gossiptown.app",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
@@ -47,15 +47,15 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Third Place, sadece bulunduğun mahallenin sohbetini göstermek için konumunu kullanır.",
+          "locationWhenInUsePermission": "Gossiptown, sadece bulunduğun mahallenin sohbetini göstermek için konumunu kullanır.",
           "isAndroidBackgroundLocationEnabled": false
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Third Place, profil fotoğrafı seçmen için fotoğraflarına erişir.",
-          "cameraPermission": "Third Place, profil fotoğrafı çekmen için kamerayı kullanır."
+          "photosPermission": "Gossiptown, profil fotoğrafı seçmen için fotoğraflarına erişir.",
+          "cameraPermission": "Gossiptown, profil fotoğrafı çekmen için kamerayı kullanır."
         }
       ]
     ],

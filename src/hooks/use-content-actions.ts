@@ -42,7 +42,7 @@ function showSheet(title: string | undefined, options: Option[]) {
 
 /**
  * Long-press menu for any piece of content.
- * Others' content: message, add to contacts, report, block. Mine: delete.
+ * Others' content: message, add to contacts, report, block (DMs: report, block). Mine: delete.
  */
 export function useContentActions() {
   const { userId } = useSession();
@@ -51,7 +51,6 @@ export function useContentActions() {
   const report = useCallback(
     (target: Target) => {
       const targetType = target.type;
-      if (targetType === 'dm') return; // DMs: block is the tool
       const keys = Object.keys(S.report.reasons);
       showSheet(
         S.report.title,
@@ -62,7 +61,11 @@ export function useContentActions() {
             supabase
               .from('reports')
               .insert({ reporter_id: userId, target_type: targetType, target_id: target.id, reason: k })
-              .then(() => Alert.alert(S.report.thanks));
+              .then(({ error }) => {
+                // 23505: already reported by this user; thank them anyway.
+                if (error && error.code !== '23505') Alert.alert(friendlyError(error));
+                else Alert.alert(S.report.thanks);
+              });
           },
         })),
       );
@@ -116,8 +119,8 @@ export function useContentActions() {
       if (target.type !== 'dm') {
         options.push({ text: S.dms.message, onPress: () => message(target) });
         options.push({ text: S.dms.addContact, onPress: () => add(target) });
-        options.push({ text: S.actions.report, onPress: () => report(target) });
       }
+      options.push({ text: S.actions.report, onPress: () => report(target) });
       options.push({ text: S.actions.block, destructive: true, onPress: () => block(target) });
       showSheet(undefined, options);
     },

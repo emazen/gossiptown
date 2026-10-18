@@ -6,7 +6,7 @@ import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Screen } from '@/components/screen';
 import { S } from '@/constants/strings';
-import { Radius, Spacing } from '@/constants/theme';
+import { Radius, Serif, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { randomHue, randomNickname, validateNickname } from '@/lib/nickname';
 import { useNeighborhood } from '@/providers/neighborhood';
@@ -75,14 +75,14 @@ function NameStep() {
               returnKeyType="done"
               onSubmitEditing={submit}
             />
-            <Ionicons name="shuffle" size={22} color={t.accent} onPress={shuffle} />
+            <Ionicons name="shuffle" size={21} color={t.textSecondary} onPress={shuffle} accessibilityLabel={S.onboarding.shuffle} />
           </View>
           {err && <Text style={[styles.err, { color: t.danger }]}>{err}</Text>}
 
           <View style={[styles.rules, { backgroundColor: t.surface, borderColor: t.border }]}>
-            {S.onboarding.rules.map((r) => (
+            {S.onboarding.rules.map((r, i) => (
               <View key={r} style={styles.ruleRow}>
-                <Ionicons name="checkmark-circle" size={18} color={t.success} />
+                <Text style={[styles.ruleNum, { color: t.accent }]}>{i + 1}</Text>
                 <Text style={[styles.rule, { color: t.textSecondary }]}>{r}</Text>
               </View>
             ))}
@@ -135,8 +135,8 @@ function LocationStep() {
     <Screen edges={['top', 'bottom']}>
       <View style={styles.body}>
         <Text style={[styles.brand, { color: t.accent }]}>{S.appName}</Text>
-        <View style={[styles.iconWrap, { backgroundColor: t.accentSoft }]}>
-          <Ionicons name="location" size={40} color={t.accent} />
+        <View style={[styles.iconWrap, { borderColor: t.border }]}>
+          <Ionicons name="location-outline" size={28} color={t.text} />
         </View>
         <Text style={[styles.h1, { color: t.text }]}>{title}</Text>
         <Text style={[styles.p, { color: t.textSecondary }]}>{body}</Text>
@@ -160,11 +160,18 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: { flex: 1, padding: Spacing.xl, gap: Spacing.lg, justifyContent: 'center' },
   footer: { padding: Spacing.xl, gap: Spacing.sm },
-  brand: { fontSize: 14, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase' },
-  h1: { fontSize: 32, fontWeight: '800', lineHeight: 38, letterSpacing: -0.5 },
-  p: { fontSize: 16, lineHeight: 24 },
-  tagline: { fontStyle: 'italic' },
-  iconWrap: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center' },
+  brand: { fontFamily: Serif.italic, fontSize: 20, lineHeight: 26 },
+  h1: { ...Type.display },
+  p: { fontSize: 17, lineHeight: 25 },
+  tagline: { fontFamily: Serif.italic, fontSize: 16 },
+  iconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -173,9 +180,10 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  nameInput: { flex: 1, fontSize: 18, fontWeight: '600' },
+  nameInput: { flex: 1, fontFamily: Serif.medium, fontSize: 19 },
   err: { fontSize: 13, marginTop: -Spacing.sm },
-  rules: { padding: Spacing.lg, borderRadius: Radius.md, borderWidth: StyleSheet.hairlineWidth, gap: Spacing.sm },
-  ruleRow: { flexDirection: 'row', gap: Spacing.sm, alignItems: 'flex-start' },
+  rules: { padding: Spacing.lg, borderRadius: Radius.lg, borderWidth: StyleSheet.hairlineWidth, gap: Spacing.md },
+  ruleRow: { flexDirection: 'row', gap: Spacing.md, alignItems: 'flex-start' },
+  ruleNum: { fontFamily: Serif.semibold, fontSize: 16, lineHeight: 20, width: 12 },
   rule: { flex: 1, fontSize: 14, lineHeight: 20 },
 });

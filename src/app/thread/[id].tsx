@@ -6,7 +6,7 @@ import { Avatar } from '@/components/avatar';
 import { Composer } from '@/components/composer';
 import { EmptyState } from '@/components/empty-state';
 import { S } from '@/constants/strings';
-import { Radius, Spacing } from '@/constants/theme';
+import { Spacing, Type } from '@/constants/theme';
 import { useContentActions } from '@/hooks/use-content-actions';
 import { useThreadDetail } from '@/hooks/use-replies';
 import { useTheme } from '@/hooks/use-theme';
@@ -60,16 +60,15 @@ export default function ThreadScreen() {
           }
           delayLongPress={300}
           style={[styles.reply, { borderBottomColor: t.border }]}>
-          {item.author && <Avatar nickname={item.author.nickname} hue={item.author.avatar_hue} url={item.author.avatar_url} size={30} />}
+          {item.author && <Avatar nickname={item.author.nickname} hue={item.author.avatar_hue} url={item.author.avatar_url} size={28} />}
           <View style={styles.replyBody}>
             <View style={styles.replyMeta}>
-              <Text style={[styles.replyName, { color: mine ? t.accent : t.text }]}>{item.author?.nickname ?? '…'}</Text>
-              {isOp && (
-                <Text style={[styles.opTag, { color: t.accent, backgroundColor: t.accentSoft }]}>{S.threads.op}</Text>
-              )}
-              <Text style={[styles.replyTime, { color: t.textTertiary }]}>{timeAgo(item.created_at)}</Text>
+              <Text style={[Type.label, { color: t.text }]}>{item.author?.nickname ?? '…'}</Text>
+              {isOp && <Text style={[Type.meta, { color: t.accent }]}>{S.threads.op}</Text>}
+              {mine && !isOp && <Text style={[Type.meta, { color: t.textTertiary }]}>{S.threads.mine}</Text>}
+              <Text style={[Type.meta, styles.replyTime, { color: t.textTertiary }]}>{timeAgo(item.created_at)}</Text>
             </View>
-            <Text style={[styles.replyText, { color: t.text }]}>{item.body}</Text>
+            <Text style={[Type.body, { color: t.text }]}>{item.body}</Text>
           </View>
         </Pressable>
       );
@@ -95,7 +94,7 @@ export default function ThreadScreen() {
 
   return (
     <SafeAreaView edges={['bottom']} style={[styles.flex, { backgroundColor: t.background }]}>
-      <Stack.Screen options={{ title: thread.author?.nickname ?? '', headerBackTitle: S.threads.title }} />
+      <Stack.Screen options={{ title: '', headerBackTitle: S.threads.title }} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -120,14 +119,15 @@ export default function ThreadScreen() {
               delayLongPress={300}
               style={[styles.head, { borderBottomColor: t.border }]}>
               <View style={styles.headMeta}>
-                {thread.author && <Avatar nickname={thread.author.nickname} hue={thread.author.avatar_hue} url={thread.author.avatar_url} size={24} />}
-                <Text style={[styles.headMetaText, { color: t.textSecondary }]}>
-                  {thread.author?.nickname ?? '…'} · {timeAgo(thread.created_at)}
+                {thread.author && <Avatar nickname={thread.author.nickname} hue={thread.author.avatar_hue} url={thread.author.avatar_url} size={22} />}
+                <Text style={[Type.meta, { color: t.textSecondary }]}>
+                  <Text style={{ color: t.text }}>{thread.author?.nickname ?? '…'}</Text>
+                  {`  ·  ${timeAgo(thread.created_at)}`}
                 </Text>
               </View>
-              <Text style={[styles.title, { color: t.text }]}>{thread.title}</Text>
+              <Text style={[Type.headline, { color: t.text }]}>{thread.title}</Text>
               {thread.body ? <Text style={[styles.body, { color: t.text }]}>{thread.body}</Text> : null}
-              <Text style={[styles.count, { color: t.textTertiary }]}>
+              <Text style={[Type.label, styles.count, { color: t.textSecondary }]}>
                 {thread.reply_count > 0 ? S.threads.replies(thread.reply_count) : S.threads.noReplies}
               </Text>
             </Pressable>
@@ -143,23 +143,24 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   list: { paddingBottom: Spacing.xl },
-  head: { padding: Spacing.lg, gap: Spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth },
+  head: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.lg,
+    gap: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
   headMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  headMetaText: { fontSize: 13, fontWeight: '600' },
-  title: { fontSize: 22, fontWeight: '800', lineHeight: 28, letterSpacing: -0.3 },
-  body: { fontSize: 16, lineHeight: 23 },
-  count: { fontSize: 13, marginTop: Spacing.xs },
+  body: { fontSize: 17, lineHeight: 26 },
+  count: { marginTop: Spacing.xs },
   reply: {
     flexDirection: 'row',
     gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.lg,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  replyBody: { flex: 1, gap: 3 },
+  replyBody: { flex: 1, gap: 4 },
   replyMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  replyName: { fontSize: 14, fontWeight: '700' },
-  opTag: { fontSize: 10, fontWeight: '700', paddingHorizontal: 6, paddingVertical: 1, borderRadius: Radius.sm },
-  replyTime: { fontSize: 12, marginLeft: 'auto' },
-  replyText: { fontSize: 15, lineHeight: 21 },
+  replyTime: { marginLeft: 'auto' },
 });

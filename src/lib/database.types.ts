@@ -73,6 +73,7 @@ export interface Database {
           body: string;
           created_at: string;
           deleted_at: string | null;
+          hidden_at: string | null;
         };
         Insert: {
           id?: string;
@@ -81,6 +82,7 @@ export interface Database {
           body: string;
           created_at?: string;
           deleted_at?: string | null;
+          hidden_at?: string | null;
         };
         Update: Partial<Database['public']['Tables']['messages']['Insert']>;
         Relationships: [];
@@ -96,6 +98,7 @@ export interface Database {
           last_activity_at: string;
           created_at: string;
           deleted_at: string | null;
+          hidden_at: string | null;
         };
         Insert: {
           id?: string;
@@ -107,6 +110,7 @@ export interface Database {
           last_activity_at?: string;
           created_at?: string;
           deleted_at?: string | null;
+          hidden_at?: string | null;
         };
         Update: Partial<Database['public']['Tables']['threads']['Insert']>;
         Relationships: [];
@@ -119,6 +123,7 @@ export interface Database {
           body: string;
           created_at: string;
           deleted_at: string | null;
+          hidden_at: string | null;
         };
         Insert: {
           id?: string;
@@ -127,6 +132,7 @@ export interface Database {
           body: string;
           created_at?: string;
           deleted_at?: string | null;
+          hidden_at?: string | null;
         };
         Update: Partial<Database['public']['Tables']['replies']['Insert']>;
         Relationships: [];
@@ -135,15 +141,18 @@ export interface Database {
         Row: {
           id: string;
           reporter_id: string;
-          target_type: 'message' | 'thread' | 'reply';
+          target_type: ReportTarget;
           target_id: string;
           reason: string;
           created_at: string;
+          status: 'open' | 'actioned' | 'dismissed';
+          resolved_at: string | null;
+          resolved_by: string | null;
         };
         Insert: {
           id?: string;
           reporter_id: string;
-          target_type: 'message' | 'thread' | 'reply';
+          target_type: ReportTarget;
           target_id: string;
           reason: string;
           created_at?: string;
@@ -207,6 +216,7 @@ export interface Database {
           body: string;
           created_at: string;
           deleted_at: string | null;
+          hidden_at: string | null;
         };
         Insert: {
           id?: string;
@@ -215,6 +225,7 @@ export interface Database {
           body: string;
           created_at?: string;
           deleted_at?: string | null;
+          hidden_at?: string | null;
         };
         Update: Partial<Database['public']['Tables']['dm_messages']['Insert']>;
         Relationships: [];
@@ -234,11 +245,42 @@ export interface Database {
       start_conversation: { Args: { p_other: string }; Returns: string };
       mark_read: { Args: { p_conversation: string }; Returns: undefined };
       can_reach: { Args: { other: string }; Returns: boolean };
+      is_moderator: { Args: Record<string, never>; Returns: boolean };
+      moderation_queue: { Args: Record<string, never>; Returns: ModerationItem[] };
+      moderate: {
+        Args: { p_target_type: ReportTarget; p_target_id: string; p_action: ModerationAction };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
 }
+
+export type ReportTarget = 'message' | 'thread' | 'reply' | 'dm';
+export type ModerationAction = 'remove' | 'ban' | 'remove_avatar' | 'dismiss';
+
+/** One reported item with open reports, from moderation_queue(). */
+export type ModerationItem = {
+  target_type: ReportTarget;
+  target_id: string;
+  report_count: number;
+  reasons: string[];
+  first_reported_at: string;
+  author_id: string;
+  author_nickname: string;
+  author_avatar_hue: number;
+  author_avatar_url: string | null;
+  author_banned: boolean;
+  /** District name; null for DMs. */
+  room: string | null;
+  /** Thread title (for a reply: its thread's title). */
+  title: string | null;
+  body: string | null;
+  created_at: string;
+  hidden: boolean;
+  deleted: boolean;
+};
 
 export type Tables<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Row'];

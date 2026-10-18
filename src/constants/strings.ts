@@ -3,7 +3,7 @@
  * Tone: casual, a little cheeky. This is a gossip app, not a bank.
  */
 export const S = {
-  appName: 'Third Place',
+  appName: 'Gossiptown',
   tagline: 'Mahallenin dedikodusu, sadece mahalleliye.',
 
   onboarding: {
@@ -26,7 +26,7 @@ export const S = {
     rules: [
       'Kimseyi tam adı, adresi veya fotoğrafıyla ifşa etme.',
       'Tehdit, nefret söylemi ve taciz yok.',
-      'Şikayet edilen içerikler incelenir, hesaplar kapatılabilir.',
+      'Şikayetleri 24 saat içinde inceliyoruz. Kural dışı içerik kaldırılır, hesaplar askıya alınır.',
     ],
     agree: 'Kuralları kabul ediyorum',
   },
@@ -64,6 +64,7 @@ export const S = {
     noReplies: 'Henüz yanıt yok',
     replyPlaceholder: 'Yanıt yaz…',
     op: 'Konuyu açan',
+    mine: 'Sen',
   },
 
   chat: {
@@ -87,6 +88,11 @@ export const S = {
     noBlocked: 'Kimseyi engellemedin.',
     unblock: 'Engeli kaldır',
     rules: 'Topluluk kuralları',
+    contact: 'Bize yaz',
+    contactHint: 'Şikayet, itiraz veya soru için',
+    contactSubject: 'Gossiptown destek',
+    moderation: 'Moderasyon',
+    moderationPending: (n: number) => (n > 0 ? `${n} içerik inceleme bekliyor` : 'Bekleyen şikayet yok'),
     signOut: 'Bu cihazdan çık',
     signOutConfirm:
       'Anonim hesabın bu cihazdan silinir ve geri alınamaz. Emin misin?',
@@ -109,11 +115,32 @@ export const S = {
       doxxing: 'Kişisel bilgi ifşası',
       harassment: 'Taciz veya tehdit',
       hate: 'Nefret söylemi',
+      sexual: 'Müstehcen içerik',
       spam: 'Spam',
+      profile: 'Uygunsuz takma ad veya fotoğraf',
       other: 'Diğer',
     } as Record<string, string>,
     thanks: 'Teşekkürler, inceleyeceğiz.',
     blockedToast: 'Kullanıcı engellendi. Artık paylaşımlarını görmezsin.',
+  },
+
+  moderation: {
+    title: 'Moderasyon',
+    empty: 'Bekleyen şikayet yok. Mahalle sakin.',
+    types: { message: 'Canlı', thread: 'Konu', reply: 'Yanıt', dm: 'Özel mesaj' } as Record<string, string>,
+    reports: (n: number) => `${n} şikayet`,
+    waiting: (ago: string) => `${ago} önce şikayet edildi`,
+    overdue: '24 saati geçti',
+    hidden: 'Otomatik gizlendi',
+    deleted: 'Sahibi sildi',
+    banned: 'Askıda',
+    inThread: (title: string) => `“${title}” konusunda`,
+    remove: 'Kaldır',
+    removeAvatar: 'Fotoğrafı kaldır',
+    ban: 'Askıya al',
+    dismiss: 'Sorun yok',
+    banTitle: 'Hesap askıya alınsın mı?',
+    banBody: (nick: string) => `${nick} artık paylaşım ve mesaj gönderemeyecek. Bu içerik de kaldırılacak.`,
   },
 
   errors: {

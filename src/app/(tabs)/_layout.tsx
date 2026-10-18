@@ -10,9 +10,9 @@ export default function TabsLayout() {
   const { unreadCount: unread } = useConversations();
   return (
     <NativeTabs
-      backgroundColor={t.surface}
-      iconColor={{ default: t.textTertiary, selected: t.accent }}
-      labelStyle={{ default: { color: t.textTertiary }, selected: { color: t.accent } }}>
+      backgroundColor={t.background}
+      iconColor={{ default: t.textTertiary, selected: t.text }}
+      labelStyle={{ default: { color: t.textTertiary }, selected: { color: t.text } }}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>{S.tabs.threads}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon

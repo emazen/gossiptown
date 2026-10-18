@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/avatar';
 import { EmptyState } from '@/components/empty-state';
 import { S } from '@/constants/strings';
-import { Spacing } from '@/constants/theme';
+import { Spacing, Type } from '@/constants/theme';
 import { useContacts } from '@/hooks/use-contacts';
 import { startConversation } from '@/hooks/use-conversations';
 import { useTheme } from '@/hooks/use-theme';
@@ -52,8 +52,8 @@ export default function ContactsScreen() {
               delayLongPress={300}
               style={({ pressed }) => [styles.row, { backgroundColor: pressed ? t.surfaceElevated : 'transparent', borderBottomColor: t.border }]}>
               <Avatar nickname={item.nickname} hue={item.avatar_hue} url={item.avatar_url} size={40} />
-              <Text style={[styles.name, { color: t.text }]}>{item.nickname}</Text>
-              <Text style={[styles.action, { color: t.accent }]}>{S.dms.startChat}</Text>
+              <Text style={[Type.name, styles.name, { color: t.text }]}>{item.nickname}</Text>
+              <Text style={[Type.label, { color: t.accent }]}>{S.dms.startChat}</Text>
             </Pressable>
           )}
         />
@@ -70,10 +70,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  name: { flex: 1, fontSize: 16, fontWeight: '700' },
-  action: { fontSize: 15, fontWeight: '700' },
+  name: { flex: 1 },
 });

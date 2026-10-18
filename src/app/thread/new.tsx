@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
 import { S } from '@/constants/strings';
-import { Spacing } from '@/constants/theme';
+import { Serif, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { createThread } from '@/hooks/use-threads';
 import { friendlyError } from '@/lib/errors';
@@ -51,10 +51,10 @@ export default function NewThread() {
       <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.topBar}>
           <Pressable onPress={() => router.back()} hitSlop={12} accessibilityLabel={S.actions.cancel}>
-            <Ionicons name="close" size={26} color={t.textSecondary} />
+            <Ionicons name="close" size={24} color={t.text} />
           </Pressable>
-          <Text style={[styles.topTitle, { color: t.text }]}>{S.threads.newThread}</Text>
-          <Text style={[styles.place, { color: t.textTertiary }]} numberOfLines={1}>
+          <Text style={[Type.name, { color: t.text }]}>{S.threads.newThread}</Text>
+          <Text style={[Type.meta, styles.place, { color: t.textSecondary }]} numberOfLines={1}>
             {neighborhood?.name}
           </Text>
         </View>
@@ -98,27 +98,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
   },
-  topTitle: { fontSize: 17, fontWeight: '700' },
-  place: { marginLeft: 'auto', fontSize: 13, fontWeight: '600', maxWidth: 140 },
+  place: { marginLeft: 'auto', maxWidth: 140 },
   title: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    fontSize: 24,
-    fontWeight: '800',
-    lineHeight: 30,
-    letterSpacing: -0.3,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.lg,
+    fontFamily: Serif.semibold,
+    fontSize: 27,
+    lineHeight: 33,
+    letterSpacing: -0.4,
   },
-  body: { flex: 1, paddingHorizontal: Spacing.lg, paddingTop: Spacing.md, fontSize: 17, lineHeight: 24, textAlignVertical: 'top' },
+  body: { flex: 1, paddingHorizontal: Spacing.xl, paddingTop: Spacing.md, fontSize: 17, lineHeight: 26, textAlignVertical: 'top' },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
-  counter: { fontSize: 13 },
+  counter: { fontSize: 13, fontVariant: ['tabular-nums'] },
   postBtn: { height: 44, paddingHorizontal: Spacing.xl },
 });

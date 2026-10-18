@@ -1,3 +1,10 @@
+import {
+  Fraunces_400Regular,
+  Fraunces_400Regular_Italic,
+  Fraunces_500Medium,
+  Fraunces_600SemiBold,
+  useFonts,
+} from '@expo-google-fonts/fraunces';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -5,7 +12,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Serif, Spacing, Type } from '@/constants/theme';
 import { ConversationsProvider } from '@/providers/conversations';
 import { NeighborhoodProvider, useNeighborhood } from '@/providers/neighborhood';
 import { SessionProvider, useSession } from '@/providers/session';
@@ -16,12 +23,18 @@ export default function RootLayout() {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
   const c = isDark ? Colors.dark : Colors.light;
+  const [fontsLoaded, fontError] = useFonts({
+    Fraunces_400Regular,
+    Fraunces_400Regular_Italic,
+    Fraunces_500Medium,
+    Fraunces_600SemiBold,
+  });
 
   const navTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),
     colors: {
       ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
-      primary: c.accent,
+      primary: c.text,
       background: c.background,
       card: c.surface,
       text: c.text,
@@ -36,7 +49,7 @@ export default function RootLayout() {
           <NeighborhoodProvider>
             <ConversationsProvider>
               <StatusBar style={isDark ? 'light' : 'dark'} />
-              <Gate />
+              <Gate fontsReady={fontsLoaded || Boolean(fontError)} />
             </ConversationsProvider>
           </NeighborhoodProvider>
         </SessionProvider>
@@ -46,15 +59,17 @@ export default function RootLayout() {
 }
 
 /** Decides between onboarding and the app based on auth + location state. */
-function Gate() {
+function Gate({ fontsReady }: { fontsReady: boolean }) {
   const { loading, error, profile } = useSession();
   const { status } = useNeighborhood();
   const scheme = useColorScheme();
   const c = scheme === 'dark' ? Colors.dark : Colors.light;
 
   useEffect(() => {
-    if (!loading) SplashScreen.hideAsync();
-  }, [loading]);
+    if (!loading && fontsReady) SplashScreen.hideAsync();
+  }, [loading, fontsReady]);
+
+  if (!fontsReady) return null;
 
   if (loading) {
     return (
@@ -76,13 +91,23 @@ function Gate() {
   const ready = Boolean(profile) && status === 'ready';
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: c.background },
+        headerTintColor: c.text,
+        headerTitleStyle: { fontFamily: Serif.semibold, fontSize: 18 },
+        headerBackButtonDisplayMode: 'minimal',
+        contentStyle: { backgroundColor: c.background },
+      }}>
       <Stack.Protected guard={ready}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="thread/[id]" options={{ headerShown: true, title: '' }} />
         <Stack.Screen name="thread/new" options={{ presentation: 'modal' }} />
         <Stack.Screen name="dm/[id]" options={{ headerShown: true, title: '' }} />
         <Stack.Screen name="contacts" options={{ headerShown: true, title: '' }} />
+        <Stack.Screen name="moderation" options={{ headerShown: true, title: '' }} />
       </Stack.Protected>
       <Stack.Protected guard={!ready}>
         <Stack.Screen name="onboarding" />
@@ -94,6 +119,6 @@ function Gate() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.sm },
-  errorTitle: { fontSize: 20, fontWeight: '700' },
+  errorTitle: { ...Type.headline },
   errorBody: { fontSize: 14, textAlign: 'center' },
 });

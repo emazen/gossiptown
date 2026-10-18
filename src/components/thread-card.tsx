@@ -1,66 +1,54 @@
-import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
 import { S } from '@/constants/strings';
-import { Radius, Spacing } from '@/constants/theme';
+import { Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { ThreadWithAuthor } from '@/lib/database.types';
 import { timeAgo } from '@/lib/time';
 
 type Props = { thread: ThreadWithAuthor; onPress: () => void; onLongPress: () => void };
 
+/** One headline in the feed column: byline, serif title, standfirst, reply count. */
 export const ThreadCard = memo(function ThreadCard({ thread, onPress, onLongPress }: Props) {
   const t = useTheme();
   const a = thread.author;
+  const replies = thread.reply_count > 0 ? S.threads.replies(thread.reply_count) : S.threads.noReplies;
   return (
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
       delayLongPress={300}
-      style={({ pressed }) => [
-        styles.card,
-        { backgroundColor: pressed ? t.surfaceElevated : t.surface, borderColor: t.border },
-      ]}>
-      <View style={styles.meta}>
-        {a && <Avatar nickname={a.nickname} hue={a.avatar_hue} url={a.avatar_url} size={22} />}
-        <Text style={[styles.metaText, { color: t.textSecondary }]} numberOfLines={1}>
-          {a?.nickname ?? '…'} · {timeAgo(thread.created_at)}
+      style={({ pressed }) => [styles.row, { backgroundColor: pressed ? t.surfaceElevated : 'transparent' }]}>
+      <View style={styles.byline}>
+        {a && <Avatar nickname={a.nickname} hue={a.avatar_hue} url={a.avatar_url} size={20} />}
+        <Text style={[Type.meta, styles.bylineText, { color: t.textSecondary }]} numberOfLines={1}>
+          <Text style={{ color: t.text }}>{a?.nickname ?? '…'}</Text>
+          {`  ·  ${timeAgo(thread.created_at)}`}
         </Text>
       </View>
-      <Text style={[styles.title, { color: t.text }]}>{thread.title}</Text>
+      <Text style={[Type.title, { color: t.text }]}>{thread.title}</Text>
       {thread.body ? (
-        <Text style={[styles.body, { color: t.textSecondary }]} numberOfLines={3}>
+        <Text style={[Type.small, { color: t.textSecondary }]} numberOfLines={2}>
           {thread.body}
         </Text>
       ) : null}
-      <View style={styles.footer}>
-        <Ionicons name="chatbubble-outline" size={14} color={t.textTertiary} />
-        <Text style={[styles.footerText, { color: t.textTertiary }]}>
-          {thread.reply_count > 0 ? S.threads.replies(thread.reply_count) : S.threads.noReplies}
-        </Text>
-        {thread.reply_count > 0 && (
-          <Text style={[styles.footerText, { color: t.textTertiary }]}>· {timeAgo(thread.last_activity_at)}</Text>
-        )}
-      </View>
+      <Text style={[Type.meta, styles.footer, { color: thread.reply_count > 0 ? t.accent : t.textTertiary }]}>
+        {replies}
+        {thread.reply_count > 0 ? (
+          <Text style={{ color: t.textTertiary }}>{`  ·  ${timeAgo(thread.last_activity_at)}`}</Text>
+        ) : null}
+      </Text>
+      <View style={[styles.rule, { backgroundColor: t.border }]} />
     </Pressable>
   );
 });
 
 const styles = StyleSheet.create({
-  card: {
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.md,
-    padding: Spacing.lg,
-    borderRadius: Radius.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: Spacing.sm,
-  },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  metaText: { fontSize: 12, fontWeight: '600', flexShrink: 1 },
-  title: { fontSize: 17, fontWeight: '700', lineHeight: 23 },
-  body: { fontSize: 14, lineHeight: 20 },
-  footer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: Spacing.xs },
-  footerText: { fontSize: 12 },
+  row: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg + 2, gap: 6 },
+  byline: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 2 },
+  bylineText: { flexShrink: 1 },
+  footer: { marginTop: 4 },
+  rule: { height: StyleSheet.hairlineWidth, marginTop: Spacing.lg + 2 },
 });
