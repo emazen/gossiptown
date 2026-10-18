@@ -36,7 +36,7 @@ src/app/                 expo-router routes
   dm/[id].tsx            1:1 chat              contacts.tsx    saved people
 src/providers/           session (anon auth + profile), neighborhood (location → room), conversations (DM inbox, single realtime sub)
 src/hooks/               use-messages / use-threads / use-replies / use-dm / use-contacts / use-content-actions (long-press menu) / use-authors (profile cache)
-src/lib/                 supabase client, database.types (hand-written), geo (geocode → il/ilçe), avatar (upload), profanity (doxxing filter), errors, nickname, time
+src/lib/                 supabase client, database.types (hand-written), geo (GPS coords; geocode only for the "not here yet" city name), avatar (upload), profanity (doxxing filter), errors, nickname, time
 src/constants/           theme.ts (tokens, dark-first), strings.ts (ALL user-facing copy)
 src/components/          Screen, Avatar, Composer, MessageRow, ThreadCard, Button, EmptyState, NeighborhoodHeader
 supabase/migrations/     schema history, applied in order; never edit an applied file, add a new one
@@ -57,7 +57,8 @@ supabase/config.toml     local Supabase config (anonymous sign-ins enabled)
 
 ## Domain rules (as implemented)
 
-- Rooms are districts. `set_location(p_lat, p_lng, p_city, p_district)` canonicalizes the district against `public.districts` (all 94 districts of the 3 cities seeded) + `district_aliases` (Eyüp→Eyüpsultan, Kazan→Kahramankazan). Unknown → `P0004`. The `neighborhoods` table kept its name; `name` and `district` both hold the district.
+- Rooms are districts. `set_location(p_lat, p_lng)` picks the district **server-side** with PostGIS: `ST_Covers` against `public.districts.geom` (OSM boundaries of all 94 districts, simplified ~10 m), else the nearest district within 1 km (coastline jitter), else `P0004` → client shows "not here yet". The client never sends a district name. `districts.geom` is not granted to clients (column grant). The `neighborhoods` table kept its name; `name` and `district` both hold the district.
+- To refresh boundaries: Overpass `rel(area)["boundary"="administrative"]["admin_level"="6"]` inside the three admin_level=4 provinces, `osmtogeojson`, `mapshaper -simplify interval=10 keep-shapes -clean`, then a new migration that updates `districts.geom` (see `20261018000000_server_side_district.sql`). PostGIS lives in the `extensions` schema.
 - Location is re-verified on foreground after 30 min (`STALE_MS`). Server treats locations older than 24h as unknown.
 - Rate limits are Postgres triggers: messages 5/10s, replies 5/30s, threads 3/10min, DMs 8/10s.
 - DMs: allowed when the two users are in the same room now, or the sender saved the recipient as a contact. Blocks stop DMs both ways. Contacts are one-directional (a saved list, not friend requests).
@@ -75,10 +76,11 @@ supabase/config.toml     local Supabase config (anonymous sign-ins enabled)
 
 - 2026-09-07: Expo + Supabase, no custom backend; anonymous auth to kill onboarding friction; persistent pseudonyms (not per-thread anon) so blocking and DMs work.
 - 2026-09-08: DMs + contacts added at Emre's request. Rooms switched from mahalle to ilçe (Emre's call, "option 1") because Apple/Google disagree on mahalle names and bigger rooms fix cold start. Profile pictures added.
+- 2026-10-18: Server-side district lookup with PostGIS polygons in Postgres instead of an Edge Function: no extra service, no geocoding API key or quota, and the check runs inside `set_location`'s transaction.
 
 ## Not done yet / known gaps
 
-1. **Location spoofing**: the client sends the geocoded district. Fix: Edge Function reverse-geocodes lat/lng server-side (points in district polygons). Lat/lng are already stored.
+1. ~~Location spoofing~~ fixed 2026-10-18: the server derives the district from lat/lng. Remaining: a client can still send fake coordinates (GPS spoofing); needs App Attest / Play Integrity, not urgent pre-launch.
 2. **No moderation tooling** beyond the `reports` table. Apple review will want a visible "we act on reports within 24h" statement and a way to contact. Avatars are unmoderated (nudity risk).
 3. **No push notifications** (DM replies, thread replies). Expo Notifications + a DB webhook/Edge Function.
 4. **No account linking**: anonymous accounts die with the app install. Add Apple/Google sign-in linking before launch.

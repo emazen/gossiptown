@@ -4,7 +4,7 @@ import { AppState } from 'react-native';
 
 import type { Neighborhood } from '@/lib/database.types';
 import { errorMessage } from '@/lib/errors';
-import { locate, type ResolvedPlace } from '@/lib/geo';
+import { cityAt, locate } from '@/lib/geo';
 import { supabase } from '@/lib/supabase';
 import { useSession } from '@/providers/session';
 
@@ -17,7 +17,8 @@ export type LocationStatus = 'idle' | 'locating' | 'ready' | 'denied' | 'unsuppo
 type NeighborhoodState = {
   status: LocationStatus;
   neighborhood: Neighborhood | null;
-  place: ResolvedPlace | null;
+  /** Province name when the user is outside our districts (for the "not here yet" copy). */
+  outsideCity: string | null;
   error: string | null;
   lastVerifiedAt: number | null;
   /** Ask for permission, locate, and register with the server. */
@@ -30,7 +31,7 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
   const { userId } = useSession();
   const [status, setStatus] = useState<LocationStatus>('idle');
   const [neighborhood, setNeighborhood] = useState<Neighborhood | null>(null);
-  const [place, setPlace] = useState<ResolvedPlace | null>(null);
+  const [outsideCity, setOutsideCity] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastVerifiedAt, setLastVerifiedAt] = useState<number | null>(null);
   const inFlight = useRef(false);
@@ -40,9 +41,8 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
     AsyncStorage.getItem(CACHE_KEY)
       .then((raw) => {
         if (!raw) return;
-        const cached = JSON.parse(raw) as { neighborhood: Neighborhood; place: ResolvedPlace; at: number };
+        const cached = JSON.parse(raw) as { neighborhood: Neighborhood; at: number };
         setNeighborhood(cached.neighborhood);
-        setPlace(cached.place);
         setLastVerifiedAt(cached.at);
       })
       .catch(() => {});
@@ -64,24 +64,23 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
         setError(res.message);
         return;
       }
-      setPlace(res.place);
-      if (!res.place.supported) {
+      // The server picks the district from the coordinates.
+      const { data, error: rpcErr } = await supabase.rpc('set_location', {
+        p_lat: res.coords.lat,
+        p_lng: res.coords.lng,
+      });
+      if (rpcErr?.code === 'P0004') {
+        setOutsideCity(await cityAt(res.coords));
         setStatus('unsupported');
         return;
       }
-      const { data, error: rpcErr } = await supabase.rpc('set_location', {
-        p_lat: res.place.lat,
-        p_lng: res.place.lng,
-        p_city: res.place.city,
-        p_district: res.place.district,
-      });
       if (rpcErr) throw rpcErr;
       const nb = data as Neighborhood;
       const at = Date.now();
       setNeighborhood(nb);
       setLastVerifiedAt(at);
       setStatus('ready');
-      AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ neighborhood: nb, place: res.place, at })).catch(() => {});
+      AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ neighborhood: nb, at })).catch(() => {});
     } catch (e) {
       if (__DEV__) console.warn('set_location failed', e);
       setStatus('error');
@@ -101,8 +100,8 @@ export function NeighborhoodProvider({ children }: PropsWithChildren) {
   }, [status, lastVerifiedAt, refresh]);
 
   const value = useMemo<NeighborhoodState>(
-    () => ({ status, neighborhood, place, error, lastVerifiedAt, refresh }),
-    [status, neighborhood, place, error, lastVerifiedAt, refresh],
+    () => ({ status, neighborhood, outsideCity, error, lastVerifiedAt, refresh }),
+    [status, neighborhood, outsideCity, error, lastVerifiedAt, refresh],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

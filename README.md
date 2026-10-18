@@ -33,14 +33,14 @@ Press `i` for the iOS simulator or `a` for Android. Simulators sit in Cupertino,
 
 ## How location gating works
 
-1. Client asks for foreground location, reverse-geocodes to (il, ilçe).
-2. Calls the `set_location` RPC, which canonicalizes the district against a seeded list of all 94 districts in the three cities, creates the room row if it is new, and stores the user's position. Unknown districts are rejected.
+1. Client asks for foreground location and sends only lat/lng.
+2. The `set_location` RPC finds the district with a PostGIS point-in-polygon lookup against the boundaries of all 94 districts in the three cities (OpenStreetMap, © OpenStreetMap contributors, ODbL). Points up to 1 km outside a boundary (shoreline GPS jitter) snap to the nearest district; anything else is rejected and the app shows "not here yet". It creates the room row if it is new and stores the user's position.
 3. Every read and write policy checks `my_neighborhood_id()`, which only returns a value if the location was verified in the last 24 hours.
 4. The app re-verifies on foreground after 30 minutes.
 
-Rooms are districts rather than mahalle on purpose: Apple and Google disagree on neighborhood names (the iOS simulator says "Moda" where the official mahalle is "Caferağa"), and district-sized rooms fill up faster. Mahalle rooms can come back later with a server-side polygon lookup.
+Rooms are districts rather than mahalle on purpose: Apple and Google disagree on neighborhood names (the iOS simulator says "Moda" where the official mahalle is "Caferağa"), and district-sized rooms fill up faster. Mahalle rooms can come back later by loading mahalle polygons the same way.
 
-Known gap: the client sends the geocoded district name, so a modified client could claim any district. Fix before public launch by reverse geocoding lat/lng in a Supabase Edge Function. The lat/lng are already stored.
+The client never names its district, so a modified client can no longer join a room that disagrees with its coordinates. It can still send fake coordinates (GPS spoofing); that needs device attestation and is out of scope for now.
 
 ## Moderation
 
@@ -63,7 +63,7 @@ src/
     contacts      saved people
   components/     shared UI
   hooks/          data hooks with realtime subscriptions
-  lib/            supabase client, geocoding, validation
+  lib/            supabase client, location, validation
   providers/      session (anon auth), neighborhood (location), conversations (DM inbox)
   constants/      theme tokens, all Turkish UI strings
 supabase/
@@ -72,7 +72,7 @@ supabase/
 
 ## Before store submission
 
-- [ ] Server-side geocoding (see above)
+- [x] Server-side district lookup (see above)
 - [ ] Moderation dashboard or at least an email digest of reports
 - [ ] Apple: EULA acceptance is in onboarding; add a link to full terms
 - [ ] Push notifications for thread replies

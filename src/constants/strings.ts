@@ -17,8 +17,8 @@ export const S = {
     openSettings: 'Ayarları aç',
     retry: 'Tekrar dene',
     unsupportedTitle: 'Henüz burada değiliz',
-    unsupportedBody: (city: string) =>
-      `${city} için yakında geliyoruz. Şimdilik İstanbul, Ankara ve İzmir’de aktifiz.`,
+    unsupportedBody: (city: string | null) =>
+      `${city ?? 'Burası'} için yakında geliyoruz. Şimdilik İstanbul, Ankara ve İzmir’de aktifiz.`,
     pickNameTitle: 'Bir takma ad seç',
     pickNameBody: 'Gerçek adını kullanma. Mahallede seni bu isimle tanıyacaklar.',
     shuffle: 'Karıştır',

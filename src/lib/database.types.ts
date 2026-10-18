@@ -223,7 +223,7 @@ export interface Database {
     Views: Record<string, never>;
     Functions: {
       set_location: {
-        Args: { p_lat: number; p_lng: number; p_city: string; p_district: string };
+        Args: { p_lat: number; p_lng: number };
         Returns: Database['public']['Tables']['neighborhoods']['Row'];
       };
       ensure_profile: {

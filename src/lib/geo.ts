@@ -9,14 +9,7 @@ export const SUPPORTED_CITIES: Record<string, string> = {
   izmir: 'İzmir',
 };
 
-export type ResolvedPlace = {
-  city: string;
-  /** İlçe. This is the room. The server canonicalizes the name. */
-  district: string;
-  lat: number;
-  lng: number;
-  supported: boolean;
-};
+export type Coords = { lat: number; lng: number };
 
 /** Lowercase + strip Turkish diacritics so "İstanbul", "Istanbul", "istanbul" all match. */
 export function normalizeKey(input: string): string {
@@ -35,52 +28,28 @@ export function normalizeKey(input: string): string {
     .replace(/[̀-ͯ]/g, '');
 }
 
-export function slugify(...parts: string[]): string {
-  return parts
-    .map((p) => normalizeKey(p).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''))
-    .filter(Boolean)
-    .join('/');
-}
-
 /**
- * Map a platform geocode result onto (il, ilçe).
- * iOS and Android disagree on which field holds what in Turkey, so we try
- * several in order of reliability. Mahalle is deliberately ignored: geocoders
- * disagree on neighborhood names across platforms.
+ * Best-effort province name for the "not here yet" screen. The room itself is
+ * decided server-side from lat/lng (`set_location`); never send this name.
+ * Returns null for our own cities or when the geocoder has nothing.
  */
-export function resolveFromAddress(
-  a: Location.LocationGeocodedAddress,
-  lat: number,
-  lng: number,
-): ResolvedPlace {
-  // Province (il). Apple: region="İstanbul". Google: region="İstanbul" too. city is sometimes the ilçe.
-  const cityRaw = pickSupported([a.region, a.city, a.subregion]) ?? a.region ?? a.city ?? '';
-  const cityKey = normalizeKey(cityRaw);
-  const supported = cityKey in SUPPORTED_CITIES;
-  const city = supported ? SUPPORTED_CITIES[cityKey] : cityRaw || 'Bilinmiyor';
-
-  // District (ilçe). Usually subregion; fall back to city when city != province.
-  const districtCandidates = [a.subregion, a.city, a.district].filter(
-    (v): v is string => Boolean(v) && normalizeKey(v!) !== cityKey,
-  );
-  const district = districtCandidates[0] ?? city;
-
-  return { city, district, lat, lng, supported };
-}
-
-function pickSupported(candidates: (string | null)[]): string | null {
-  for (const c of candidates) {
-    if (c && normalizeKey(c) in SUPPORTED_CITIES) return c;
+export async function cityAt({ lat, lng }: Coords): Promise<string | null> {
+  try {
+    const [a] = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+    const city = a?.region ?? a?.city ?? null;
+    if (!city || normalizeKey(city) in SUPPORTED_CITIES) return null;
+    return city;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 export type LocateResult =
-  | { status: 'ok'; place: ResolvedPlace }
+  | { status: 'ok'; coords: Coords }
   | { status: 'denied' }
   | { status: 'error'; message: string };
 
-/** Ask for permission, read position, reverse geocode. */
+/** Ask for permission and read position. */
 export async function locate(): Promise<LocateResult> {
   const { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== 'granted') return { status: 'denied' };
@@ -99,11 +68,7 @@ export async function locate(): Promise<LocateResult> {
       lng = pos.coords.longitude;
     }
 
-    const results = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
-    const addr = results[0];
-    if (!addr) return { status: 'error', message: 'Adres çözümlenemedi.' };
-
-    return { status: 'ok', place: resolveFromAddress(addr, lat, lng) };
+    return { status: 'ok', coords: { lat, lng } };
   } catch (e) {
     return { status: 'error', message: e instanceof Error ? e.message : String(e) };
   }

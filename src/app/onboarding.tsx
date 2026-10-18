@@ -100,7 +100,7 @@ function NameStep() {
 
 function LocationStep() {
   const t = useTheme();
-  const { status, place, error, refresh } = useNeighborhood();
+  const { status, outsideCity, error, refresh } = useNeighborhood();
   const [asked, setAsked] = useState(false);
 
   // If we already had permission from a previous session, just go.
@@ -124,7 +124,7 @@ function LocationStep() {
     onPress = () => Linking.openSettings();
   } else if (status === 'unsupported') {
     title = S.onboarding.unsupportedTitle;
-    body = S.onboarding.unsupportedBody(place?.city ?? '');
+    body = S.onboarding.unsupportedBody(outsideCity);
     cta = S.onboarding.retry;
   } else if (status === 'error') {
     body = `${S.errors.generic}\n${error ?? ''}`.trim();
